@@ -1268,10 +1268,6 @@ async function lookupSubmit(form){
 
   try{
 
-    /*
-     * Endpoint da Edge Function consultar-denuncia.
-     * COLOQUE AQUI A URL EXATA QUE VOCÊ TESTOU NO SUPABASE.
-     */
     var endpoint =
       'https://zttqgkxnczzvfuxzratf.supabase.co/functions/v1/swift-processor';
 
@@ -1279,7 +1275,8 @@ async function lookupSubmit(form){
       method: 'POST',
 
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'apikey': 'sb_publishable_NDH3uBdH8wxGGReCxn_Slg_OvxuTZjf'
       },
 
       body: JSON.stringify({
@@ -1300,46 +1297,32 @@ async function lookupSubmit(form){
       );
     }
 
-    if(!resultado.sucesso){
+    if(!resultado.sucesso || !resultado.denuncia){
       throw new Error(
         resultado?.erro ||
-        resultado?.mensagem ||
         'Protocolo ou código de acesso inválido.'
       );
     }
 
-    /*
-     * A Edge Function confirmou a existência
-     * da denúncia.
-     */
-
-    var denuncia =
-      resultado.denuncia ||
-      resultado.dados ||
-      resultado;
+    var denuncia = resultado.denuncia;
 
     /*
-     * Converte a resposta real do Supabase
-     * para o formato que a tela atual já utiliza.
+     * Converte a resposta do Supabase
+     * para o formato utilizado pela tela atual.
      */
 
     var caso = {
-      id: denuncia.id || protocolo,
+      id: denuncia.protocolo,
 
-      protocolo:
-        denuncia.protocolo || protocolo,
+      protocolo: denuncia.protocolo,
 
-      accessCode:
-        accessCode,
+      accessCode: accessCode,
 
       createdAt:
-        denuncia.criado_em ||
-        denuncia.created_at ||
-        denuncia.createdAt ||
-        new Date().toISOString(),
+        denuncia.criado_em || new Date().toISOString(),
 
       anonymous:
-        denuncia.anonima !== false,
+        denuncia.anonima === true,
 
       denunciante:
         denuncia.anonima
@@ -1369,124 +1352,38 @@ async function lookupSubmit(form){
       testemunhas:
         denuncia.testemunhas || '',
 
-      evidenciasDisponiveis:
-        '',
-
-      anexosDescricao:
-        '',
-
       status:
-        denuncia.status === 'recebida'
-          ? 'recebido'
-          : (denuncia.status || 'recebido'),
+        denuncia.status || 'recebida',
 
-      urgente: false,
+      prioridade:
+        denuncia.prioridade || 'media',
 
-      risco:
-        denuncia.prioridade || null,
-
-      conflitoInteresse: {
-        verificado: false,
-        detalhe: ''
-      },
-
-      responsavel:
-        denuncia.responsavel_id || '',
-
-      milestones: {
-        recebidoEm:
-          denuncia.criado_em ||
-          denuncia.created_at ||
-          denuncia.createdAt ||
-          null,
-
-        triagemEm: null,
-        investigacaoEm: null,
-        concluidoEm:
-          denuncia.concluido_em || null
-      },
-
-      evidenciasAnalisadas: '',
-
-      diligencias: '',
-
-      conclusao:
-        denuncia.conclusao || null,
-
-      fundamentacao:
-        denuncia.fundamentacao || '',
-
-      medidasAdotadas:
-        denuncia.medidas_adotadas || '',
+      mensagens:
+        Array.isArray(denuncia.mensagens)
+          ? denuncia.mensagens
+          : [],
 
       log: []
     };
 
     /*
-     * Mensagens retornadas pela Edge Function.
-     */
-
-    var mensagens =
-      resultado.mensagens ||
-      denuncia.mensagens ||
-      [];
-
-    if(Array.isArray(mensagens)){
-
-      caso.log = mensagens.map(function(m){
-
-        var tipo = m.remetente_tipo || m.tipo;
-
-        var tipoLog =
-          tipo === 'admin'
-            ? 'mensagem_equipe'
-            : tipo === 'denunciante'
-              ? 'mensagem_denunciante'
-              : 'mensagem_equipe';
-
-        return {
-          ts:
-            m.criado_em ||
-            m.created_at ||
-            m.criadoEm ||
-            new Date().toISOString(),
-
-          tipo: tipoLog,
-
-          autor:
-            tipo === 'admin'
-              ? 'Equipe'
-              : 'Denunciante',
-
-          texto:
-            m.mensagem ||
-            m.texto ||
-            ''
-        };
-
-      });
-
-    }
-
-    /*
-     * Adiciona o próprio registro como resultado
-     * temporário da consulta.
+     * Guarda o resultado da consulta.
      */
 
     window.ULTIMA_CONSULTA_DENUNCIA = caso;
 
-    lookupError = '';
-    lookupResultId = caso.id;
-
     /*
-     * Como a tela atual procura o resultado dentro
-     * de STATE.cases, colocamos somente o resultado
-     * consultado em memória.
+     * A tela atual utiliza STATE.cases para
+     * localizar a denúncia.
      *
-     * Isso NÃO grava nada no banco.
+     * Aqui colocamos apenas o resultado consultado
+     * em memória. Nada é gravado novamente no banco.
      */
 
     STATE.cases = [caso];
+
+    lookupError = '';
+    lookupResultId = caso.id;
 
     render();
 
