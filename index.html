@@ -1010,51 +1010,169 @@ function viewNovo(){
   footerHTML();
 }
 
-function submitForm(form){
-  var fd = new FormData(form);
-  var anonymous = fd.get('anon') === '1';
-  var categoria = fd.get('categoria') || '';
-  var descricao = (fd.get('descricao')||'').trim();
-  if(!categoria || !descricao || !fd.get('termo')){
-    formError = 'Selecione a categoria, descreva os fatos e confirme a declaração de boa-fé antes de enviar.';
-    formDraft = {
-      anonymous:anonymous, categoria:categoria,
-      nome:fd.get('nome')||'', email:fd.get('email')||'', area:fd.get('area')||'', telefone:fd.get('telefone')||'',
-      dataFato:fd.get('dataFato')||'', local:fd.get('local')||'', pessoas:fd.get('pessoas')||'',
-      descricao:descricao, testemunhas:fd.get('testemunhas')||'', evidencias:fd.get('evidencias')||'',
-      anexos:fd.get('anexos')||'', termo: !!fd.get('termo')
-    };
-    render();
+async function submitForm(){
+  const form = document.getElementById('ep-form');
+
+  if (!form) {
+    console.error('Formulário ep-form não encontrado.');
     return;
   }
-  var protocolo = genProtocolo();
-  var accessCode = genAccessCode();
-  var id = 'c_' + Date.now().toString(36) + Math.random().toString(36).slice(2,7);
-  var ts = nowISO();
-  var novo = {
-    id:id, protocolo:protocolo, accessCode:accessCode, createdAt:ts,
-    anonymous:anonymous,
-    denunciante: anonymous ? null : {nome:fd.get('nome')||'', email:fd.get('email')||'', area:fd.get('area')||'', telefone:fd.get('telefone')||''},
-    categoria:categoria,
-    dataFato:fd.get('dataFato')||'', local:fd.get('local')||'', pessoasEnvolvidas:fd.get('pessoas')||'',
-    descricao:descricao, testemunhas:fd.get('testemunhas')||'', evidenciasDisponiveis:fd.get('evidencias')||'',
-    anexosDescricao:fd.get('anexos')||'',
-    status:'recebido', urgente:false, risco:null,
-    conflitoInteresse:{verificado:false, detalhe:''},
-    responsavel:'',
-    milestones:{recebidoEm:ts, triagemEm:null, investigacaoEm:null, concluidoEm:null},
-    evidenciasAnalisadas:'', diligencias:'',
-    conclusao:null, fundamentacao:'', medidasAdotadas:'',
-    log:[{ts:ts, tipo:'sistema', autor:'Sistema', texto:'Manifestação recebida e protocolo gerado.'}]
-  };
-  formDraft = { anonymous:true, categoria:'', nome:'', email:'', telefone:'', dataFato:'', local:'', pessoas:'', descricao:'', testemunhas:'', evidencias:'', anexos:'', termo:false };
-  formError = '';
-  lookupDraft = { protocolo:protocolo, accessCode:accessCode };
-  lookupResultId = id;
-  lookupError = '';
-  justSubmitted = true;
-  location.hash = '#protocolo';
-  commit(function(state){ state.cases.push(novo); }, { stash:{hash:'#protocolo', lookup:lookupDraft, resultId:id, justSubmitted:true} });
+
+  const submitButton = form.querySelector('button[type="submit"]');
+
+  if (submitButton) {
+    submitButton.disabled = true;
+    submitButton.dataset.originalText = submitButton.textContent;
+    submitButton.textContent = 'Enviando...';
+  }
+
+  try {
+    const formData = new FormData(form);
+
+    const anonima = formData.get('anonima') === 'on';
+
+    const dados = {
+      anonima: anonima,
+
+      nome: anonima ? null : (formData.get('nome') || '').trim(),
+      email: anonima ? null : (formData.get('email') || '').trim(),
+      telefone: anonima ? null : (formData.get('telefone') || '').trim(),
+
+      relacao_empresa: formData.get('relacao_empresa') || null,
+
+      categoria: formData.get('categoria') || null,
+
+      data_ocorrencia:
+        formData.get('data_ocorrencia') || null,
+
+      local_ocorrencia:
+        (formData.get('local_ocorrencia') || '').trim(),
+
+      envolvidos:
+        (formData.get('envolvidos') || '').trim(),
+
+      testemunhas:
+        (formData.get('testemunhas') || '').trim(),
+
+      descricao:
+        (formData.get('descricao') || '').trim()
+    };
+
+    // Validações básicas
+    if (!dados.categoria) {
+      throw new Error('Selecione uma categoria.');
+    }
+
+    if (!dados.descricao) {
+      throw new Error('Descreva o ocorrido.');
+    }
+
+    if (dados.descricao.length < 20) {
+      throw new Error(
+        'A descrição precisa ter pelo menos 20 caracteres.'
+      );
+    }
+
+    const endpoint =
+      'https://zttqgkxnczzvfuxzratf.supabase.co/functions/v1/criar-denuncia';
+
+    const response = await fetch(endpoint, {
+      method: 'POST',
+
+      headers: {
+        'Content-Type': 'application/json'
+      },
+
+      body: JSON.stringify(dados)
+    });
+
+    const resultado = await response.json();
+
+    console.log('Resposta da Edge Function:', resultado);
+
+    if (!response.ok) {
+      throw new Error(
+        resultado?.erro ||
+        resultado?.mensagem ||
+        'Não foi possível registrar a denúncia.'
+      );
+    }
+
+    if (!resultado.sucesso) {
+      throw new Error(
+        resultado?.mensagem ||
+        'Não foi possível registrar a denúncia.'
+      );
+    }
+
+    /*
+     * O protocolo e a senha são gerados
+     * exclusivamente pela Edge Function.
+     */
+
+    const protocolo = resultado.protocolo;
+    const senha = resultado.senha;
+
+    // Guarda temporariamente os dados da denúncia
+    window.ULTIMA_DENUNCIA = {
+      protocolo: protocolo,
+      senha: senha
+    };
+
+    console.log('Denúncia registrada:', protocolo);
+
+    /*
+     * Mostra a tela de sucesso existente.
+     *
+     * Primeiro tentamos as funções que já possam existir
+     * no seu HTML.
+     */
+
+    if (typeof showSuccess === 'function') {
+
+      showSuccess(protocolo, senha);
+
+    } else if (typeof mostrarSucesso === 'function') {
+
+      mostrarSucesso(protocolo, senha);
+
+    } else {
+
+      /*
+       * Fallback temporário.
+       * Depois vamos integrar isso à tela visual
+       * existente do seu site.
+       */
+
+      alert(
+        'Denúncia registrada com sucesso!\n\n' +
+        'Protocolo: ' + protocolo + '\n' +
+        'Senha: ' + senha
+      );
+    }
+
+  } catch (error) {
+
+    console.error(
+      'Erro ao enviar denúncia:',
+      error
+    );
+
+    alert(
+      error?.message ||
+      'Ocorreu um erro ao registrar a denúncia. Tente novamente.'
+    );
+
+  } finally {
+
+    if (submitButton) {
+      submitButton.disabled = false;
+
+      submitButton.textContent =
+        submitButton.dataset.originalText ||
+        'Enviar manifestação';
+    }
+  }
 }
 
 /* ====================== VIEW: protocolo (tracking) ====================== */
