@@ -1238,20 +1238,286 @@ function protocolResultHTML(c){
   '</div>';
 }
 
-function lookupSubmit(form){
+async function lookupSubmit(form){
   var fd = new FormData(form);
-  var protocolo = (fd.get('protocolo')||'').trim();
-  var accessCode = (fd.get('accessCode')||'').trim();
-  lookupDraft = {protocolo:protocolo, accessCode:accessCode};
-  var found = findCase(protocolo, accessCode);
-  if(!found){
-    lookupError = 'Não encontramos nenhuma manifestação com esse protocolo e código de acesso. Confira os dados e tente novamente.';
-    lookupResultId = null;
-  } else {
-    lookupError = '';
-    lookupResultId = found.id;
+
+  var protocolo = (fd.get('protocolo') || '').trim().toUpperCase();
+  var accessCode = (fd.get('accessCode') || '').trim();
+
+  lookupDraft = {
+    protocolo: protocolo,
+    accessCode: accessCode
+  };
+
+  lookupError = '';
+  lookupResultId = null;
+
+  if(!protocolo || !accessCode){
+    lookupError = 'Informe o protocolo e o código de acesso.';
+    render();
+    return;
   }
-  render();
+
+  var submitButton = form.querySelector('button[type="submit"]');
+
+  if(submitButton){
+    submitButton.disabled = true;
+    submitButton.dataset.originalText = submitButton.textContent;
+    submitButton.textContent = 'Consultando…';
+  }
+
+  try{
+
+    /*
+     * Endpoint da Edge Function consultar-denuncia.
+     * COLOQUE AQUI A URL EXATA QUE VOCÊ TESTOU NO SUPABASE.
+     */
+    var endpoint =
+      'https://zttqgkxnczzvfuxzratf.supabase.co/functions/v1/swift-processor';
+
+    var response = await fetch(endpoint, {
+      method: 'POST',
+
+      headers: {
+        'Content-Type': 'application/json'
+      },
+
+      body: JSON.stringify({
+        protocolo: protocolo,
+        senha: accessCode
+      })
+    });
+
+    var resultado = await response.json();
+
+    console.log('Resposta da consulta:', resultado);
+
+    if(!response.ok){
+      throw new Error(
+        resultado?.erro ||
+        resultado?.mensagem ||
+        'Não foi possível consultar a denúncia.'
+      );
+    }
+
+    if(!resultado.sucesso){
+      throw new Error(
+        resultado?.erro ||
+        resultado?.mensagem ||
+        'Protocolo ou código de acesso inválido.'
+      );
+    }
+
+    /*
+     * A Edge Function confirmou a existência
+     * da denúncia.
+     */
+
+    var denuncia =
+      resultado.denuncia ||
+      resultado.dados ||
+      resultado;
+
+    /*
+     * Converte a resposta real do Supabase
+     * para o formato que a tela atual já utiliza.
+     */
+
+    var caso = {
+      id: denuncia.id || protocolo,
+
+      protocolo:
+        denuncia.protocolo || protocolo,
+
+      accessCode:
+        accessCode,
+
+      createdAt:
+        denuncia.criado_em ||
+        denuncia.created_at ||
+        denuncia.createdAt ||
+        new Date().toISOString(),
+
+      anonymous:
+        denuncia.anonima !== false,
+
+      denunciante:
+        denuncia.anonima
+          ? null
+          : {
+              nome: denuncia.nome || '',
+              email: denuncia.email || '',
+              telefone: denuncia.telefone || '',
+              area: denuncia.relacao_empresa || ''
+            },
+
+      categoria:
+        denuncia.categoria || '',
+
+      dataFato:
+        denuncia.data_ocorrencia || '',
+
+      local:
+        denuncia.local_ocorrencia || '',
+
+      pessoasEnvolvidas:
+        denuncia.envolvidos || '',
+
+      descricao:
+        denuncia.descricao || '',
+
+      testemunhas:
+        denuncia.testemunhas || '',
+
+      evidenciasDisponiveis:
+        '',
+
+      anexosDescricao:
+        '',
+
+      status:
+        denuncia.status === 'recebida'
+          ? 'recebido'
+          : (denuncia.status || 'recebido'),
+
+      urgente: false,
+
+      risco:
+        denuncia.prioridade || null,
+
+      conflitoInteresse: {
+        verificado: false,
+        detalhe: ''
+      },
+
+      responsavel:
+        denuncia.responsavel_id || '',
+
+      milestones: {
+        recebidoEm:
+          denuncia.criado_em ||
+          denuncia.created_at ||
+          denuncia.createdAt ||
+          null,
+
+        triagemEm: null,
+        investigacaoEm: null,
+        concluidoEm:
+          denuncia.concluido_em || null
+      },
+
+      evidenciasAnalisadas: '',
+
+      diligencias: '',
+
+      conclusao:
+        denuncia.conclusao || null,
+
+      fundamentacao:
+        denuncia.fundamentacao || '',
+
+      medidasAdotadas:
+        denuncia.medidas_adotadas || '',
+
+      log: []
+    };
+
+    /*
+     * Mensagens retornadas pela Edge Function.
+     */
+
+    var mensagens =
+      resultado.mensagens ||
+      denuncia.mensagens ||
+      [];
+
+    if(Array.isArray(mensagens)){
+
+      caso.log = mensagens.map(function(m){
+
+        var tipo = m.remetente_tipo || m.tipo;
+
+        var tipoLog =
+          tipo === 'admin'
+            ? 'mensagem_equipe'
+            : tipo === 'denunciante'
+              ? 'mensagem_denunciante'
+              : 'mensagem_equipe';
+
+        return {
+          ts:
+            m.criado_em ||
+            m.created_at ||
+            m.criadoEm ||
+            new Date().toISOString(),
+
+          tipo: tipoLog,
+
+          autor:
+            tipo === 'admin'
+              ? 'Equipe'
+              : 'Denunciante',
+
+          texto:
+            m.mensagem ||
+            m.texto ||
+            ''
+        };
+
+      });
+
+    }
+
+    /*
+     * Adiciona o próprio registro como resultado
+     * temporário da consulta.
+     */
+
+    window.ULTIMA_CONSULTA_DENUNCIA = caso;
+
+    lookupError = '';
+    lookupResultId = caso.id;
+
+    /*
+     * Como a tela atual procura o resultado dentro
+     * de STATE.cases, colocamos somente o resultado
+     * consultado em memória.
+     *
+     * Isso NÃO grava nada no banco.
+     */
+
+    STATE.cases = [caso];
+
+    render();
+
+  } catch(error){
+
+    console.error(
+      'Erro ao consultar denúncia:',
+      error
+    );
+
+    lookupResultId = null;
+
+    lookupError =
+      error?.message ||
+      'Não foi possível consultar a denúncia. Tente novamente.';
+
+    render();
+
+  } finally {
+
+    if(submitButton){
+
+      submitButton.disabled = false;
+
+      submitButton.textContent =
+        submitButton.dataset.originalText ||
+        'Consultar';
+
+    }
+
+  }
 }
 
 function replySubmit(form, caseId){
