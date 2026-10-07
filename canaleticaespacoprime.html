@@ -1,0 +1,1600 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Canal de Ética Espaço Prime</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  color-scheme: light;
+  --paper:#F7F5F0;
+  --surface:#FFFFFF;
+  --surface-2:#FBFAF7;
+  --ink:#17223B;
+  --ink-2:#4B5468;
+  --ink-3:#8B93A3;
+  --border:rgba(23,34,59,0.12);
+  --border-strong:rgba(23,34,59,0.24);
+  --accent:#0F6B5C;
+  --accent-ink:#FFFFFF;
+  --accent-soft:#E4F1EE;
+  --good:#0ca30c;
+  --warning:#c98500;
+  --serious:#c85a37;
+  --critical:#c23636;
+  --cat-1:#2a78d6; --cat-2:#c85a2a; --cat-3:#1a9c6c; --cat-4:#b8790a; --cat-5:#c15f8a;
+  --shadow: 0 1px 2px rgba(23,34,59,.06), 0 10px 28px -14px rgba(23,34,59,.22);
+  --focus-ring: 0 0 0 3px rgba(15,107,92,.35);
+  --radius: 14px;
+  --radius-sm: 9px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme: dark;
+    --paper:#0D131E;
+    --surface:#161F2E;
+    --surface-2:#121A27;
+    --ink:#F2F1EC;
+    --ink-2:#BAC1D0;
+    --ink-3:#828CA0;
+    --border:rgba(242,241,236,0.14);
+    --border-strong:rgba(242,241,236,0.26);
+    --accent:#49C2AA;
+    --accent-ink:#082019;
+    --accent-soft:rgba(73,194,170,0.16);
+    --good:#3fcf5f;
+    --warning:#e0aa3a;
+    --serious:#e8895f;
+    --critical:#e8615f;
+    --cat-1:#5b9bea; --cat-2:#e08252; --cat-3:#39bf8f; --cat-4:#d99f30; --cat-5:#e087ac;
+    --shadow: 0 1px 2px rgba(0,0,0,.4), 0 14px 34px -16px rgba(0,0,0,.65);
+    --focus-ring: 0 0 0 3px rgba(73,194,170,.4);
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme: dark;
+  --paper:#0D131E;
+  --surface:#161F2E;
+  --surface-2:#121A27;
+  --ink:#F2F1EC;
+  --ink-2:#BAC1D0;
+  --ink-3:#828CA0;
+  --border:rgba(242,241,236,0.14);
+  --border-strong:rgba(242,241,236,0.26);
+  --accent:#49C2AA;
+  --accent-ink:#082019;
+  --accent-soft:rgba(73,194,170,0.16);
+  --good:#3fcf5f;
+  --warning:#e0aa3a;
+  --serious:#e8895f;
+  --critical:#e8615f;
+  --cat-1:#5b9bea; --cat-2:#e08252; --cat-3:#39bf8f; --cat-4:#d99f30; --cat-5:#e087ac;
+  --shadow: 0 1px 2px rgba(0,0,0,.4), 0 14px 34px -16px rgba(0,0,0,.65);
+  --focus-ring: 0 0 0 3px rgba(73,194,170,.4);
+}
+
+*,*::before,*::after{box-sizing:border-box;}
+html{-webkit-text-size-adjust:100%;}
+body{
+  margin:0;
+  background:var(--paper);
+  color:var(--ink);
+  font-family:'Source Sans 3', ui-sans-serif, system-ui, -apple-system, sans-serif;
+  font-size:16px;
+  line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3,h4{
+  font-family:'Fraunces', Georgia, 'Times New Roman', serif;
+  font-weight:600;
+  line-height:1.15;
+  margin:0 0 .5em;
+  text-wrap:balance;
+  color:var(--ink);
+}
+p{margin:0 0 1em;}
+a{color:var(--accent);}
+::selection{background:var(--accent-soft);}
+:focus-visible{outline:none; box-shadow:var(--focus-ring); border-radius:6px;}
+button{font-family:inherit;}
+img,svg{display:block;max-width:100%;}
+.tabular{font-variant-numeric:tabular-nums;}
+
+.container{max-width:1080px;margin:0 auto;padding:0 24px;}
+.container-narrow{max-width:760px;margin:0 auto;padding:0 24px;}
+
+.boot{padding:80px 24px;text-align:center;color:var(--ink-3);font-size:15px;}
+
+/* ---------- topbar ---------- */
+.topbar{
+  position:sticky;top:0;z-index:40;
+  background:color-mix(in srgb, var(--paper) 88%, transparent);
+  backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--border);
+}
+.topbar-inner{
+  max-width:1080px;margin:0 auto;padding:14px 24px;
+  display:flex;align-items:center;gap:20px;
+}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--ink);flex:0 0 auto;}
+.brand-mark{
+  width:32px;height:32px;border-radius:9px;background:var(--ink);color:var(--paper);
+  display:flex;align-items:center;justify-content:center;flex:0 0 auto;
+}
+.brand-mark svg{width:17px;height:17px;}
+.brand-text{display:flex;flex-direction:column;line-height:1.1;}
+.brand-text b{font-family:'Fraunces',serif;font-size:15.5px;font-weight:600;}
+.brand-text span{font-size:11px;color:var(--ink-3);letter-spacing:.03em;}
+.nav{display:flex;align-items:center;gap:4px;margin-left:auto;flex-wrap:wrap;}
+.nav a{
+  text-decoration:none;color:var(--ink-2);font-size:14.5px;font-weight:600;
+  padding:8px 12px;border-radius:8px;white-space:nowrap;
+}
+.nav a:hover{background:var(--surface-2);color:var(--ink);}
+.nav a.active{background:var(--ink);color:var(--paper);}
+.nav a.subtle{color:var(--ink-3);font-weight:600;font-size:13px;}
+
+/* ---------- buttons ---------- */
+.btn{
+  appearance:none;border:1px solid var(--border-strong);background:var(--surface);
+  color:var(--ink);font-weight:600;font-size:14.5px;padding:11px 18px;border-radius:10px;
+  cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  text-decoration:none;line-height:1.2;transition:transform .06s ease, background .15s ease;
+}
+.btn:hover{background:var(--surface-2);}
+.btn:active{transform:translateY(1px);}
+.btn-primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);}
+.btn-primary:hover{filter:brightness(1.06);}
+.btn-ghost{background:transparent;border-color:transparent;color:var(--ink-2);}
+.btn-ghost:hover{background:var(--surface-2);color:var(--ink);}
+.btn-danger{color:var(--critical);border-color:color-mix(in srgb, var(--critical) 45%, var(--border-strong));}
+.btn-sm{padding:7px 12px;font-size:13.5px;border-radius:8px;}
+.btn-block{width:100%;}
+.btn[disabled]{opacity:.45;cursor:not-allowed;}
+.btn svg{width:15px;height:15px;flex:0 0 auto;}
+
+/* ---------- cards / layout ---------- */
+.card{
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
+  padding:22px;box-shadow:var(--shadow);
+}
+.card + .card{margin-top:16px;}
+.section-title{
+  font-family:'Fraunces',serif;font-size:19px;font-weight:600;margin:0 0 4px;
+}
+.section-hint{color:var(--ink-3);font-size:13.5px;margin:0 0 16px;}
+.hr{border:none;border-top:1px solid var(--border);margin:20px 0;}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+@media (max-width:640px){.grid-2{grid-template-columns:1fr;}}
+
+/* ---------- forms ---------- */
+.field{margin-bottom:16px;}
+.field label{display:block;font-weight:600;font-size:14px;margin-bottom:6px;color:var(--ink);}
+.field .req{color:var(--critical);}
+.field-hint{font-size:12.5px;color:var(--ink-3);margin-top:5px;}
+input[type=text],input[type=email],input[type=tel],input[type=password],select,textarea{
+  width:100%;font-family:inherit;font-size:15px;color:var(--ink);
+  background:var(--surface-2);border:1px solid var(--border-strong);border-radius:9px;
+  padding:11px 12px;line-height:1.4;
+}
+textarea{resize:vertical;min-height:92px;}
+input:focus-visible,select:focus-visible,textarea:focus-visible{
+  outline:none;box-shadow:var(--focus-ring);border-color:var(--accent);
+}
+.choice-row{display:flex;gap:10px;flex-wrap:wrap;}
+.choice-card{
+  flex:1 1 160px;border:1px solid var(--border-strong);border-radius:10px;padding:12px 14px;
+  cursor:pointer;background:var(--surface-2);display:flex;align-items:flex-start;gap:10px;
+}
+.choice-card input{width:auto;margin:3px 0 0;}
+.choice-card.active{border-color:var(--accent);background:var(--accent-soft);}
+.checkline{display:flex;gap:10px;align-items:flex-start;font-size:14px;color:var(--ink-2);}
+.checkline input{width:auto;margin-top:3px;}
+
+/* ---------- badges ---------- */
+.badge{
+  display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:700;
+  padding:4px 10px;border-radius:100px;white-space:nowrap;letter-spacing:.01em;
+}
+.badge .dot{width:7px;height:7px;border-radius:50%;flex:0 0 auto;}
+.badge-neutral{background:var(--surface-2);color:var(--ink-2);border:1px solid var(--border-strong);}
+.badge-good{background:color-mix(in srgb, var(--good) 14%, var(--surface));color:color-mix(in srgb, var(--good) 70%, var(--ink));border:1px solid color-mix(in srgb, var(--good) 35%, transparent);}
+.badge-good .dot{background:var(--good);}
+.badge-warning{background:color-mix(in srgb, var(--warning) 16%, var(--surface));color:color-mix(in srgb, var(--warning) 65%, var(--ink));border:1px solid color-mix(in srgb, var(--warning) 40%, transparent);}
+.badge-warning .dot{background:var(--warning);}
+.badge-serious{background:color-mix(in srgb, var(--serious) 16%, var(--surface));color:color-mix(in srgb, var(--serious) 60%, var(--ink));border:1px solid color-mix(in srgb, var(--serious) 40%, transparent);}
+.badge-serious .dot{background:var(--serious);}
+.badge-critical{background:color-mix(in srgb, var(--critical) 16%, var(--surface));color:color-mix(in srgb, var(--critical) 60%, var(--ink));border:1px solid color-mix(in srgb, var(--critical) 40%, transparent);}
+.badge-critical .dot{background:var(--critical);}
+.badge-cat{border:1px solid var(--border-strong);}
+.badge-status{background:var(--ink);color:var(--paper);}
+.badge-status.st-recebido{background:var(--ink-3);}
+.badge-status.st-triagem{background:color-mix(in srgb, var(--accent) 60%, var(--ink-3));}
+.badge-status.st-investigacao{background:var(--accent);color:var(--accent-ink);}
+.badge-status.st-concluido{background:var(--ink);}
+
+/* ---------- stepper ---------- */
+.stepper{display:flex;align-items:center;margin:8px 0 4px;}
+.step{display:flex;flex-direction:column;align-items:center;gap:8px;flex:1;position:relative;}
+.step .node{width:26px;height:26px;border-radius:50%;background:var(--surface-2);border:2px solid var(--border-strong);
+  display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--ink-3);z-index:1;}
+.step .label{font-size:12.5px;font-weight:600;color:var(--ink-3);text-align:center;}
+.step .line{position:absolute;top:13px;left:-50%;width:100%;height:2px;background:var(--border-strong);z-index:0;}
+.step:first-child .line{display:none;}
+.step.done .node{background:var(--ink);border-color:var(--ink);color:var(--paper);}
+.step.done .line{background:var(--ink);}
+.step.done .label{color:var(--ink);}
+.step.current .node{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);}
+.step.current .label{color:var(--ink);}
+
+/* ---------- table / list ---------- */
+.table-wrap{overflow-x:auto;border:1px solid var(--border);border-radius:var(--radius);}
+table{width:100%;border-collapse:collapse;font-size:14px;min-width:720px;}
+thead th{
+  text-align:left;font-size:11.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--ink-3);
+  padding:11px 14px;border-bottom:1px solid var(--border);background:var(--surface-2);
+}
+tbody td{padding:13px 14px;border-bottom:1px solid var(--border);vertical-align:middle;}
+tbody tr:last-child td{border-bottom:none;}
+tbody tr.row-link{cursor:pointer;}
+tbody tr.row-link:hover{background:var(--surface-2);}
+.mono{font-variant-numeric:tabular-nums;letter-spacing:.02em;font-weight:600;}
+
+/* ---------- stat tiles ---------- */
+.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;}
+@media (max-width:860px){.stat-grid{grid-template-columns:repeat(2,1fr);}}
+.stat-tile{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px 20px;box-shadow:var(--shadow);}
+.stat-tile .stat-label{font-size:12.5px;color:var(--ink-3);font-weight:600;text-transform:uppercase;letter-spacing:.03em;margin-bottom:8px;}
+.stat-tile .stat-value{font-family:'Fraunces',serif;font-size:30px;font-weight:600;line-height:1;}
+.stat-tile .stat-sub{font-size:12.5px;color:var(--ink-3);margin-top:8px;}
+
+/* ---------- bars ---------- */
+.bar-row{display:grid;grid-template-columns:minmax(150px,max-content) 1fr 40px;align-items:center;gap:12px;padding:7px 0;}
+.bar-row .bar-name{font-size:13.5px;color:var(--ink-2);min-width:0;}
+.bar-row .bar-name .badge{white-space:normal;}
+.bar-track{height:10px;border-radius:6px;background:var(--surface-2);overflow:hidden;}
+.bar-fill{height:100%;border-radius:6px;}
+.bar-row .bar-count{font-size:13px;font-weight:700;text-align:right;font-variant-numeric:tabular-nums;}
+@media (max-width:640px){.bar-row{grid-template-columns:1fr;row-gap:6px;}.bar-row .bar-count{text-align:left;}}
+
+/* ---------- misc ---------- */
+.banner{border-radius:12px;padding:14px 16px;font-size:14px;display:flex;gap:10px;align-items:flex-start;}
+.banner svg{width:18px;height:18px;flex:0 0 auto;margin-top:1px;}
+.banner-info{background:var(--accent-soft);color:color-mix(in srgb, var(--accent) 55%, var(--ink));}
+.banner-warn{background:color-mix(in srgb, var(--warning) 16%, var(--surface));color:color-mix(in srgb, var(--warning) 55%, var(--ink));border:1px solid color-mix(in srgb, var(--warning) 40%, transparent);}
+.banner-good{background:color-mix(in srgb, var(--good) 14%, var(--surface));color:color-mix(in srgb, var(--good) 55%, var(--ink));}
+.proto-code{
+  font-family:'Fraunces',serif;font-weight:600;font-size:26px;letter-spacing:.02em;
+}
+.access-code{font-variant-numeric:tabular-nums;letter-spacing:.12em;font-weight:700;}
+.msg{border-left:3px solid var(--border-strong);padding:8px 0 8px 14px;margin-bottom:10px;}
+.msg.equipe{border-color:var(--accent);}
+.msg.denunciante{border-color:var(--ink-3);}
+.msg .msg-meta{font-size:11.5px;color:var(--ink-3);margin-bottom:3px;font-weight:600;text-transform:uppercase;letter-spacing:.03em;}
+.msg .msg-text{font-size:14.5px;color:var(--ink);white-space:pre-wrap;}
+.toast{
+  position:fixed;left:50%;bottom:26px;transform:translateX(-50%) translateY(10px);
+  background:var(--ink);color:var(--paper);padding:12px 18px;border-radius:10px;font-size:14px;font-weight:600;
+  box-shadow:var(--shadow);opacity:0;pointer-events:none;transition:opacity .2s ease, transform .2s ease;z-index:100;
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+.overlay{
+  position:fixed;inset:0;background:color-mix(in srgb, var(--paper) 80%, transparent);
+  display:flex;align-items:center;justify-content:center;z-index:200;font-weight:600;color:var(--ink-2);
+  backdrop-filter:blur(2px);
+}
+.spinner{width:18px;height:18px;border-radius:50%;border:2.5px solid var(--border-strong);border-top-color:var(--accent);
+  animation:spin .7s linear infinite;margin-right:10px;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.footer{padding:40px 24px 60px;text-align:center;color:var(--ink-3);font-size:13px;}
+.footer a{color:var(--ink-3);}
+.kicker{font-size:12.5px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--accent);margin-bottom:10px;}
+.filter-row{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px;}
+.filter-row select{width:auto;min-width:160px;}
+.empty{color:var(--ink-3);font-size:14px;padding:24px 0;text-align:center;}
+.readonly-note{font-size:12.5px;color:var(--ink-3);margin-top:6px;}
+.legend{display:flex;flex-wrap:wrap;gap:14px;margin-top:14px;}
+.legend-item{display:flex;align-items:center;gap:7px;font-size:12.5px;color:var(--ink-2);}
+.legend-item .sw{width:10px;height:10px;border-radius:3px;}
+@media (prefers-reduced-motion:reduce){.spinner{animation:none;}.toast{transition:none;}}
+</style>
+</head>
+<body>
+<div id="app"><div class="boot">Carregando canal…</div></div>
+
+<script type="application/json" id="state-data">
+{"cases": [{"id": "c1", "protocolo": "EP-2026-000001", "accessCode": "XDA2JH", "createdAt": "2026-04-08T09:12:00-03:00", "anonymous": true, "denunciante": null, "categoria": "fraude", "dataFato": "final de março/2026", "local": "Setor de Compras", "pessoasEnvolvidas": "Um comprador e um fornecedor de embalagens", "descricao": "Notei que pedidos de compra de um mesmo fornecedor vêm sendo fracionados repetidamente para ficar abaixo do limite que exige segunda aprovação.", "testemunhas": "Outra pessoa do setor financeiro pode confirmar o padrão.", "evidenciasDisponiveis": "Prints de três pedidos de compra consecutivos no ERP com valores muito próximos do limite.", "anexosDescricao": "", "status": "concluido", "urgente": false, "risco": "alto", "conflitoInteresse": {"verificado": true, "detalhe": "Nenhum membro do comitê tem relação com o setor de Compras ou com o fornecedor citado."}, "responsavel": "Comitê de Ética – Relator 1", "milestones": {"recebidoEm": "2026-04-08T09:12:00-03:00", "triagemEm": "2026-04-10T14:00:00-03:00", "investigacaoEm": "2026-04-14T10:00:00-03:00", "concluidoEm": "2026-04-29T16:30:00-03:00"}, "evidenciasAnalisadas": "Análise de 6 meses de pedidos de compra do fornecedor apontado; identificado padrão de fracionamento em 9 pedidos.", "diligencias": "Entrevista com o comprador responsável e com a liderança do setor de Compras.", "conclusao": "procedente", "fundamentacao": "O padrão de fracionamento foi confirmado pela auditoria dos pedidos e reconhecido em entrevista.", "medidasAdotadas": "Revisão do processo de aprovação de compras e reforço do treinamento sobre limites de alçada.", "log": [{"ts": "2026-04-08T09:12:00-03:00", "tipo": "sistema", "autor": "Sistema", "texto": "Manifestação recebida e protocolo gerado."}, {"ts": "2026-04-10T14:00:00-03:00", "tipo": "sistema", "autor": "Sistema", "texto": "Status atualizado para \"Em triagem\"."}, {"ts": "2026-04-14T10:00:00-03:00", "tipo": "sistema", "autor": "Sistema", "texto": "Status atualizado para \"Em investigação\"."}, {"ts": "2026-04-22T11:00:00-03:00", "tipo": "mensagem_equipe", "autor": "Equipe", "texto": "Obrigado pelo relato. Estamos analisando o histórico de pedidos do fornecedor citado."}, {"ts": "2026-04-29T16:30:00-03:00", "tipo": "sistema", "autor": "Sistema", "texto": "Caso encerrado. Resultado: Procedente."}]}, {"id": "c2", "protocolo": "EP-2026-000002", "accessCode": "HE2DY2", "createdAt": "2026-04-15T08:40:00-03:00", "anonymous": false, "denunciante": {"nome": "Colaborador(a) da equipe de Operações", "email": "colaborador.operacoes@exemplo.com", "telefone": ""}, "categoria": "assedio_moral", "dataFato": "ao longo de abril/2026", "local": "Equipe de Operações", "pessoasEnvolvidas": "Um gestor direto da equipe", "descricao": "Um gestor tem feito cobranças em tom hostil na frente de outros colegas durante as reuniões diárias, o que tem gerado desconforto na equipe.", "testemunhas": "Pelo menos dois colegas presenciaram as reuniões.", "evidenciasDisponiveis": "Nenhum documento, apenas relatos.", "anexosDescricao": "", "status": "concluido", "urgente": false, "risco": "alto", "conflitoInteresse": {"verificado": true, "detalhe": "Sem relação hierárquica entre o comitê e o gestor citado."}, "responsavel": "Comitê de Ética – Relator 2", "milestones": {"recebidoEm": "2026-04-15T08:40:00-03:00", "triagemEm": "2026-04-17T09:00:00-03:00", "investigacaoEm": "2026-04-21T09:00:00-03:00", "concluidoEm": "2026-05-06T15:00:00-03:00"}, "evidenciasAnalisadas": "Entrevistas individuais com quatro integrantes da equipe.", "diligencias": "Três entrevistas confirmaram o tom das cobranças; uma não presenciou diretamente.", "conclusao": "parcial", "fundamentacao": "Parte dos relatos foi confirmada por testemunhas diretas; não houve evidência de intenção reiterada de humilhação.", "medidasAdotadas": "Orientação formal ao gestor e acompanhamento de RH pelos próximos 3 meses.", "log": [{"ts": "2026-04-15T08:40:00-03:00", "tipo": "sistema", "autor": "Sistema", "texto": "Manifestação recebida e protocolo gerado."}, {"ts": "2026-04-17T09:00:00-03:00", "tipo": "sistema", "autor": "Sistema", "texto": "Status atualizado para \"Em triagem\"."}, {"ts": "2026-04-21T09:00:00-03:00", "tipo": "sistema", "autor": "Sistema", "texto": "Status atualizado para \"Em investigação\"."}, {"ts": "2026-05-06T15:00:00-03:00", "tipo": "sistema", "autor": "Sistema", "texto": "Caso encerrado. Resultado: Parcialmente procedente."}]}, {"id": "c3", "protocolo": "EP-2026-000003", "accessCode": "7UCVQB", "createdAt": "2026-05-03T11:05:00-03:00", "anonymous": true, "denunciante": null, "categoria": "descumprimento_politica", "dataFato": "abril/2026", "local": "Filial 102", "pessoasEnvolvidas": "Não soube identificar", "descricao": "Alguns pedidos parecem estar sendo aprovados sem seguir o checklist padrão de conferência antes do faturamento.", "testemunhas": "Não soube informar.", "evidenciasDisponiveis": "Não possuo documentos.", "anexosDescricao": "", "status": "concluido", "urgente": false, "risco": "baixo", "conflitoInteresse": {"verificado": false, "detalhe": ""}, "responsavel": "Comitê de Ética – Relator 1", "milestones": {"recebidoEm": "2026-05-03T11:05:00-03:00", "triagemEm": "2026-05-05T10:00:00-03:00", "investigacaoEm": null, "concluidoEm": "2026-05-12T14:00:00-03:00"}, "evidenciasAnalisadas": "Checklist de faturamento revisado por amostragem em 20 pedidos do período.", "diligencias": "", "conclusao": "nao_procedente", "fundamentacao": "A amostragem não identificou desvio relevante do checklist padrão.", "medidasAdotadas": "", "log": [{"ts": "2026-05-03T11:05:00-03:00", "tipo": "sistema", "autor": "Sistema", "texto": "Manifestação recebida e protocolo gerado."}, {"ts": "2026-05-05T10:00:00-03:00", "tipo": "sistema", "autor": "Sistema", "texto": "Status atualizado para \"Em triagem\"."}, {"ts": "2026-05-12T14:00:00-03:00", "tipo": "sistema", "autor": "Sistema", "texto": "Caso encerrado. Resultado: Não procedente."}]}, {"id": "c4", "protocolo": "EP-2026-000004", "accessCode": "ACGHTW", "createdAt": "2026-05-11T16:20:00-03:00", "anonymous": true, "denunciante": null, "categoria": "furto", "dataFato": "primeira semana de maio/2026", "local": "Depósito – Filial 102", "pessoasEnvolvidas": "Um operador do turno da tarde", "descricao": "Notei divergência entre o estoque físico e o sistema em alguns itens de alto valor, coincidindo com o turno de um operador específico.", "testemunhas": "Não há testemunhas diretas.", "evidenciasDisponiveis": "Relatório de contagem de estoque com divergências.", "anexosDescricao": "", "status": "concluido", "urgente": false, "risco": "medio", "conflitoInteresse": {"verificado": true, "detalhe": "Sem conflito identificado."}, "responsavel": "Comitê de Ética – Relator 2", "milestones": {"recebidoEm": "2026-05-11T16:20:00-03:00", "triagemEm": "2026-05-13T09:30:00-03:00", "investigacaoEm": "2026-05-18T09:00:00-03:00", "concluidoEm": "2026-06-02T11:00:00-03:00"}, "evidenciasAnalisadas": "Cruzamento do relatório de contagem com os registros de saída do turno apontado.", "diligencias": "Revisão de imagens de CFTV do período em conjunto com a segurança patrimonial.", "conclusao": "procedente", "fundamentacao": "Divergência confirmada e associada a registros de saída não documentados no turno apontado.", "medidasAdotadas": "Abertura de processo interno específico e reforço de dupla conferência na saída de itens de alto valor.", "log": [{"ts": "2026-05-11T16:20:00-03:00", "tipo": "sistema", "autor": "Sistema", "texto": "Manifestação recebida e protocolo gerado."}, {"ts": "2026-05-13T09:30:00-03:00", "tipo": "sistema", "autor": "Sistema", "texto": "Status atualizado para \"Em triagem\"."}, {"ts": "2026-05-18T09:00:00-03:00", "tipo": "sistema", "autor": "Sistema", "texto": "Status atualizado para \"Em investigação\"."}, {"ts": "2026-06-02T11:00:00-03:00", "tipo": "sistema", "autor": "Sistema", "texto": "Caso encerrado. Resultado: Procedente."}]}, {"id": "c5", "protocolo": "EP-2026-000005", "accessCode": "AUGZXZ", "createdAt": "2026-05-20T13:00:00-03:00", "anonymous": false, "denunciante": {"nome": "Colaborador(a) do Comercial", "email": "comercial.contato@exemplo.com", "telefone": ""}, "categoria": "conflito_interesse", "dataFato": "em curso", "local": "Setor Comercial", "pessoasEnvolvidas": "Um analista comercial e um fornecedor", "descricao": "Um analista parece manter relação comercial paralela com um fornecedor que ele próprio avalia em processos de cotação.", "testemunhas": "Não tenho certeza.", "evidenciasDisponiveis": "Nenhum documento no momento.", "anexosDescricao": "", "status": "concluido", "urgente": false, "risco": "medio", "conflitoInteresse": {"verificado": true, "detalhe": "Nenhum conflito do comitê com as partes citadas."}, "responsavel": "Comitê de Ética – Relator 1", "milestones": {"recebidoEm": "2026-05-20T13:00:00-03:00", "triagemEm": "2026-05-22T10:00:00-03:00", "investigacaoEm": "2026-05-27T09:00:00-03:00", "concluidoEm": "2026-06-10T17:00:00-03:00"}, "evidenciasAnalisadas": "Análise de propostas comerciais avaliadas pelo analista nos últimos 12 meses.", "diligencias": "Não foi possível confirmar vínculo formal com o fornecedor dentro do prazo da apuração.", "conclusao": "inconclusiva", "fundamentacao": "Não foram encontrados elementos suficientes para confirmar ou afastar a relação apontada.", "medidasAdotadas": "Reforço da declaração anual de conflito de interesses para a equipe comercial.", "log": [{"ts": "2026-05-20T13:00:00-03:00", "tipo": "sistema", "autor": "Sistema", "texto": "Manifestação recebida e protocolo gerado."}, {"ts": "2026-05-22T10:00:00-03:00", "tipo": "sistema", "autor": "Sistema", "texto": "Status atualizado para \"Em triagem\"."}, {"ts": "2026-05-27T09:00:00-03:00", "tipo": "sistema", "autor": "Sistema", "texto": "Status atualizado para \"Em investigação\"."}, {"ts": "2026-06-10T17:00:00-03:00", "tipo": "sistema", "autor": "Sistema", "texto": "Caso encerrado. Resultado: Inconclusiva."}]}, {"id": "c6", "protocolo": "EP-2026-000006", "accessCode": "UQHRVJ", "createdAt": "2026-06-05T10:15:00-03:00", "anonymous": true, "denunciante": null, "categoria": "discriminacao", "dataFato": "maio/2026", "local": "Equipe Administrativa", "pessoasEnvolvidas": "Um colega de equipe", "descricao": "Presenciei comentários discriminatórios recorrentes direcionados a uma colega em conversas de equipe.", "testemunhas": "Outros colegas podem ter presenciado.", "evidenciasDisponiveis": "Nenhum documento.", "anexosDescricao": "", "status": "investigacao", "urgente": false, "risco": "alto", "conflitoInteresse": {"verificado": true, "detalhe": "Sem conflito identificado até o momento."}, "responsavel": "Comitê de Ética – Relator 2", "milestones": {"recebidoEm": "2026-06-05T10:15:00-03:00", "triagemEm": "2026-06-08T09:00:00-03:00", "investigacaoEm": "2026-06-12T09:00:00-03:00", "concluidoEm": null}, "evidenciasAnalisadas": "Entrevistas em andamento com integrantes da equipe.", "diligencias": "Agendadas mais duas entrevistas.", "conclusao": null, "fundamentacao": "", "medidasAdotadas": "", "log": [{"ts": "2026-06-05T10:15:00-03:00", "tipo": "sistema", "autor": "Sistema", "texto": "Manifestação recebida e protocolo gerado."}, {"ts": "2026-06-08T09:00:00-03:00", "tipo": "sistema", "autor": "Sistema", "texto": "Status atualizado para \"Em triagem\"."}, {"ts": "2026-06-12T09:00:00-03:00", "tipo": "sistema", "autor": "Sistema", "texto": "Status atualizado para \"Em investigação\"."}, {"ts": "2026-06-14T15:00:00-03:00", "tipo": "mensagem_equipe", "autor": "Equipe", "texto": "Recebemos sua manifestação e já iniciamos as entrevistas. Retornaremos assim que houver novidade."}]}, {"id": "c7", "protocolo": "EP-2026-000007", "accessCode": "46A34F", "createdAt": "2026-06-18T09:50:00-03:00", "anonymous": true, "denunciante": null, "categoria": "irregularidade_terceiros", "dataFato": "início de junho/2026", "local": "Transportadora parceira", "pessoasEnvolvidas": "Uma transportadora parceira", "descricao": "Notas fiscais de frete de uma transportadora parceira parecem estar com valores acima do combinado em contrato.", "testemunhas": "Financeiro pode confirmar os valores.", "evidenciasDisponiveis": "Comparativo de três notas fiscais com a tabela de frete contratada.", "anexosDescricao": "", "status": "investigacao", "urgente": false, "risco": "medio", "conflitoInteresse": {"verificado": false, "detalhe": ""}, "responsavel": "Comitê de Ética – Relator 1", "milestones": {"recebidoEm": "2026-06-18T09:50:00-03:00", "triagemEm": "2026-06-20T10:00:00-03:00", "investigacaoEm": "2026-06-25T10:00:00-03:00", "concluidoEm": null}, "evidenciasAnalisadas": "Levantamento das notas fiscais dos últimos 4 meses da transportadora.", "diligencias": "Reunião marcada com o setor de logística.", "conclusao": null, "fundamentacao": "", "medidasAdotadas": "", "log": [{"ts": "2026-06-18T09:50:00-03:00", "tipo": "sistema", "autor": "Sistema", "texto": "Manifestação recebida e protocolo gerado."}, {"ts": "2026-06-20T10:00:00-03:00", "tipo": "sistema", "autor": "Sistema", "texto": "Status atualizado para \"Em triagem\"."}, {"ts": "2026-06-25T10:00:00-03:00", "tipo": "sistema", "autor": "Sistema", "texto": "Status atualizado para \"Em investigação\"."}]}, {"id": "c8", "protocolo": "EP-2026-000008", "accessCode": "ZQMJEG", "createdAt": "2026-07-02T14:30:00-03:00", "anonymous": false, "denunciante": {"nome": "Colaborador(a) da Logística", "email": "logistica.equipe@exemplo.com", "telefone": ""}, "categoria": "uso_indevido", "dataFato": "recorrente", "local": "Setor de Logística", "pessoasEnvolvidas": "Um colaborador do setor", "descricao": "Um colaborador vem usando o veículo da empresa para assuntos pessoais fora do horário e da rota autorizada.", "testemunhas": "Não soube informar.", "evidenciasDisponiveis": "Registros de rastreamento veicular podem confirmar.", "anexosDescricao": "", "status": "triagem", "urgente": false, "risco": "baixo", "conflitoInteresse": {"verificado": false, "detalhe": ""}, "responsavel": "", "milestones": {"recebidoEm": "2026-07-02T14:30:00-03:00", "triagemEm": "2026-07-04T09:00:00-03:00", "investigacaoEm": null, "concluidoEm": null}, "evidenciasAnalisadas": "", "diligencias": "", "conclusao": null, "fundamentacao": "", "medidasAdotadas": "", "log": [{"ts": "2026-07-02T14:30:00-03:00", "tipo": "sistema", "autor": "Sistema", "texto": "Manifestação recebida e protocolo gerado."}, {"ts": "2026-07-04T09:00:00-03:00", "tipo": "sistema", "autor": "Sistema", "texto": "Status atualizado para \"Em triagem\"."}]}, {"id": "c9", "protocolo": "EP-2026-000009", "accessCode": "93MDCP", "createdAt": "2026-07-10T17:45:00-03:00", "anonymous": true, "denunciante": null, "categoria": "ameaca", "dataFato": "hoje", "local": "Estacionamento da filial", "pessoasEnvolvidas": "Um ex-colega e um colaborador atual", "descricao": "Uma pessoa foi abordada de forma ameaçadora por um ex-colaborador no estacionamento após o expediente.", "testemunhas": "Há uma testemunha que presenciou parte da abordagem.", "evidenciasDisponiveis": "Nenhum documento, apenas relato imediato.", "anexosDescricao": "", "status": "triagem", "urgente": true, "risco": "alto", "conflitoInteresse": {"verificado": false, "detalhe": ""}, "responsavel": "Comitê de Ética – Relator 2", "milestones": {"recebidoEm": "2026-07-10T17:45:00-03:00", "triagemEm": "2026-07-11T08:30:00-03:00", "investigacaoEm": null, "concluidoEm": null}, "evidenciasAnalisadas": "", "diligencias": "", "conclusao": null, "fundamentacao": "", "medidasAdotadas": "", "log": [{"ts": "2026-07-10T17:45:00-03:00", "tipo": "sistema", "autor": "Sistema", "texto": "Manifestação recebida e protocolo gerado."}, {"ts": "2026-07-11T08:30:00-03:00", "tipo": "sistema", "autor": "Sistema", "texto": "Status atualizado para \"Em triagem\"."}, {"ts": "2026-07-11T08:35:00-03:00", "tipo": "mensagem_equipe", "autor": "Equipe", "texto": "Obrigado por relatar. Dado o risco envolvido, este caso foi priorizado e a segurança patrimonial já foi acionada."}]}, {"id": "c10", "protocolo": "EP-2026-000010", "accessCode": "DN6NWJ", "createdAt": "2026-08-04T10:00:00-03:00", "anonymous": true, "denunciante": null, "categoria": "outro", "dataFato": "não sei precisar", "local": "Não sei informar", "pessoasEnvolvidas": "Não sei informar", "descricao": "Gostaria de relatar uma situação que me deixou desconfortável, mas ainda estou reunindo mais detalhes antes de descrever.", "testemunhas": "", "evidenciasDisponiveis": "", "anexosDescricao": "", "status": "recebido", "urgente": false, "risco": null, "conflitoInteresse": {"verificado": false, "detalhe": ""}, "responsavel": "", "milestones": {"recebidoEm": "2026-08-04T10:00:00-03:00", "triagemEm": null, "investigacaoEm": null, "concluidoEm": null}, "evidenciasAnalisadas": "", "diligencias": "", "conclusao": null, "fundamentacao": "", "medidasAdotadas": "", "log": [{"ts": "2026-08-04T10:00:00-03:00", "tipo": "sistema", "autor": "Sistema", "texto": "Manifestação recebida e protocolo gerado."}]}, {"id": "c11", "protocolo": "EP-2026-000011", "accessCode": "4B2RUD", "createdAt": "2026-08-12T15:20:00-03:00", "anonymous": false, "denunciante": {"nome": "Colaborador(a) do Financeiro", "email": "financeiro.contato@exemplo.com", "telefone": ""}, "categoria": "manipulacao", "dataFato": "julho/2026", "local": "Setor Financeiro", "pessoasEnvolvidas": "Não tenho certeza", "descricao": "Alguns números de um relatório interno pareciam ter sido alterados manualmente antes do envio à diretoria.", "testemunhas": "Não soube informar.", "evidenciasDisponiveis": "Comparação entre duas versões do mesmo relatório com valores diferentes.", "anexosDescricao": "", "status": "recebido", "urgente": false, "risco": null, "conflitoInteresse": {"verificado": false, "detalhe": ""}, "responsavel": "", "milestones": {"recebidoEm": "2026-08-12T15:20:00-03:00", "triagemEm": null, "investigacaoEm": null, "concluidoEm": null}, "evidenciasAnalisadas": "", "diligencias": "", "conclusao": null, "fundamentacao": "", "medidasAdotadas": "", "log": [{"ts": "2026-08-12T15:20:00-03:00", "tipo": "sistema", "autor": "Sistema", "texto": "Manifestação recebida e protocolo gerado."}]}, {"id": "c12", "protocolo": "EP-2026-000012", "accessCode": "8PCUK5", "createdAt": "2026-06-22T09:00:00-03:00", "anonymous": true, "denunciante": null, "categoria": "retaliacao", "dataFato": "junho/2026", "local": "Equipe Comercial", "pessoasEnvolvidas": "Um gestor direto", "descricao": "Depois que um colega participou de uma investigação interna como testemunha, o gestor dele passou a excluí-lo de reuniões importantes e retirou responsabilidades sem justificativa.", "testemunhas": "Duas pessoas da equipe notaram a mudança de tratamento.", "evidenciasDisponiveis": "E-mails de convocação de reunião dos quais o colega deixou de ser incluído.", "anexosDescricao": "", "status": "concluido", "urgente": true, "risco": "critico", "conflitoInteresse": {"verificado": true, "detalhe": "Caso direcionado à assessoria jurídica externa por envolver possível retaliação a testemunha de investigação em andamento."}, "responsavel": "Assessoria externa designada", "milestones": {"recebidoEm": "2026-06-22T09:00:00-03:00", "triagemEm": "2026-06-22T11:00:00-03:00", "investigacaoEm": "2026-06-23T09:00:00-03:00", "concluidoEm": "2026-07-08T16:00:00-03:00"}, "evidenciasAnalisadas": "Análise de convites de reunião e atribuições de tarefas antes e depois da participação na investigação anterior.", "diligencias": "Entrevistas com o gestor, o colaborador afetado e duas testemunhas.", "conclusao": "procedente", "fundamentacao": "Confirmado padrão de exclusão sistemática após a participação do colaborador como testemunha em investigação anterior.", "medidasAdotadas": "Afastamento do gestor da liderança direta da equipe durante apuração disciplinar e restituição das responsabilidades ao colaborador.", "log": [{"ts": "2026-06-22T09:00:00-03:00", "tipo": "sistema", "autor": "Sistema", "texto": "Manifestação recebida e protocolo gerado."}, {"ts": "2026-06-22T11:00:00-03:00", "tipo": "sistema", "autor": "Sistema", "texto": "Status atualizado para \"Em triagem\"."}, {"ts": "2026-06-23T09:00:00-03:00", "tipo": "sistema", "autor": "Sistema", "texto": "Status atualizado para \"Em investigação\"."}, {"ts": "2026-07-08T16:00:00-03:00", "tipo": "sistema", "autor": "Sistema", "texto": "Caso encerrado. Resultado: Procedente."}]}, {"id": "c13", "protocolo": "EP-2026-000013", "accessCode": "XW76NV", "createdAt": "2026-08-20T11:30:00-03:00", "anonymous": false, "denunciante": null, "categoria": "corrupcao", "dataFato": "em curso", "local": "Setor de Compras", "pessoasEnvolvidas": "Um fornecedor e um comprador", "descricao": "Um fornecedor teria oferecido benefícios pessoais a um comprador em troca de prioridade nas cotações de compra.", "testemunhas": "Não tenho testemunhas diretas.", "evidenciasDisponiveis": "Mensagens que podem indicar a oferta, ainda sendo reunidas.", "anexosDescricao": "", "status": "investigacao", "urgente": true, "risco": "critico", "conflitoInteresse": {"verificado": true, "detalhe": "Envolvimento de área sensível; comitê validou ausência de conflito e manteve acompanhamento direto da diretoria."}, "responsavel": "Comitê de Ética – Relator 1 + Diretoria", "milestones": {"recebidoEm": "2026-08-20T11:30:00-03:00", "triagemEm": "2026-08-20T14:00:00-03:00", "investigacaoEm": "2026-08-21T09:00:00-03:00", "concluidoEm": null}, "evidenciasAnalisadas": "Coleta preliminar de evidências em andamento, com preservação de registros do fornecedor e do comprador.", "diligencias": "Entrevistas agendadas; medidas de preservação de evidências já adotadas.", "conclusao": null, "fundamentacao": "", "medidasAdotadas": "", "log": [{"ts": "2026-08-20T11:30:00-03:00", "tipo": "sistema", "autor": "Sistema", "texto": "Manifestação recebida e protocolo gerado."}, {"ts": "2026-08-20T14:00:00-03:00", "tipo": "sistema", "autor": "Sistema", "texto": "Status atualizado para \"Em triagem\"."}, {"ts": "2026-08-21T09:00:00-03:00", "tipo": "sistema", "autor": "Sistema", "texto": "Status atualizado para \"Em investigação\"."}, {"ts": "2026-08-21T09:15:00-03:00", "tipo": "interno", "autor": "Equipe", "texto": "Risco crítico — diretoria informada e evidências preservadas conforme protocolo de incidentes."}]}, {"id": "c11b_placeholder", "protocolo": "EP-2026-000014", "accessCode": "GZCBYH", "createdAt": "2026-08-24T13:00:00-03:00", "anonymous": true, "denunciante": null, "categoria": "assedio_sexual", "dataFato": "agosto/2026", "local": "Equipe Comercial", "pessoasEnvolvidas": "Um gestor de outra área", "descricao": "Recebi comentários de conotação sexual e insistentes de um gestor de outra área durante um evento da empresa.", "testemunhas": "Uma colega presenciou parte da situação.", "evidenciasDisponiveis": "Print de mensagens enviadas após o evento.", "anexosDescricao": "", "status": "recebido", "urgente": false, "risco": null, "conflitoInteresse": {"verificado": false, "detalhe": ""}, "responsavel": "", "milestones": {"recebidoEm": "2026-08-24T13:00:00-03:00", "triagemEm": null, "investigacaoEm": null, "concluidoEm": null}, "evidenciasAnalisadas": "", "diligencias": "", "conclusao": null, "fundamentacao": "", "medidasAdotadas": "", "log": [{"ts": "2026-08-24T13:00:00-03:00", "tipo": "sistema", "autor": "Sistema", "texto": "Manifestação recebida e protocolo gerado."}]}]}
+</script>
+
+<script id="app-logic">
+(function(){
+"use strict";
+
+/* ====================== reference data ====================== */
+var CATEGORY_GROUPS = [
+  { id:'pessoas', label:'Respeito às pessoas', color:'--cat-1', items:[
+    {id:'assedio_moral', label:'Assédio moral'},
+    {id:'assedio_sexual', label:'Assédio sexual'},
+    {id:'discriminacao', label:'Discriminação'},
+    {id:'ameaca', label:'Ameaça, intimidação ou constrangimento'},
+    {id:'abuso_autoridade', label:'Abuso de autoridade'},
+    {id:'retaliacao', label:'Retaliação por denúncia ou participação em investigação'}
+  ]},
+  { id:'integridade', label:'Integridade e ética', color:'--cat-2', items:[
+    {id:'fraude', label:'Fraude'},
+    {id:'corrupcao', label:'Corrupção, suborno ou pagamento indevido'},
+    {id:'conflito_interesse', label:'Conflito de interesses'},
+    {id:'favorecimento', label:'Favorecimento indevido'},
+    {id:'manipulacao', label:'Manipulação ou falsificação de informações e documentos'}
+  ]},
+  { id:'patrimonio', label:'Patrimônio e recursos', color:'--cat-3', items:[
+    {id:'furto', label:'Furto ou desvio de produtos, dinheiro ou ativos'},
+    {id:'uso_indevido', label:'Uso indevido de recursos da empresa'},
+    {id:'irregularidade_financeira', label:'Irregularidades em compras, vendas ou reembolsos'}
+  ]},
+  { id:'processos', label:'Processos e conformidade', color:'--cat-4', items:[
+    {id:'descumprimento_politica', label:'Descumprimento de políticas internas'},
+    {id:'risco_empresa', label:'Conduta que possa gerar risco relevante à empresa'},
+    {id:'irregularidade_terceiros', label:'Irregularidades envolvendo fornecedores, parceiros ou terceiros'},
+    {id:'violacao_legal', label:'Possível violação legal ou regulatória'}
+  ]},
+  { id:'outros', label:'Outros', color:'--cat-5', items:[
+    {id:'outro', label:'Outro assunto relacionado a ética ou integridade'}
+  ]}
+];
+var CAT_INDEX = {};
+CATEGORY_GROUPS.forEach(function(g){ g.items.forEach(function(it){ CAT_INDEX[it.id] = {group:g, item:it}; }); });
+
+var RISK_INFO = {
+  baixo:{label:'Baixo', cls:'good', desc:'Situação pontual sem risco relevante aparente.', tratamento:'Triagem e tratamento ordinário.'},
+  medio:{label:'Médio', cls:'warning', desc:'Possível violação de política ou conduta inadequada.', tratamento:'Investigação proporcional ao caso.'},
+  alto:{label:'Alto', cls:'serious', desc:'Possível fraude, assédio, corrupção, risco financeiro relevante ou envolvimento de liderança.', tratamento:'Prioridade elevada e avaliação de medidas preventivas.'},
+  critico:{label:'Crítico', cls:'critical', desc:'Risco imediato à integridade das pessoas, patrimônio ou continuidade da operação.', tratamento:'Ação imediata, preservação de evidências e escalonamento à liderança competente ou assessoria externa.'}
+};
+var RISK_ORDER = ['baixo','medio','alto','critico'];
+
+var CONCLUSAO_INFO = {
+  procedente:{label:'Procedente', cls:'serious', desc:'Evidências suficientes sustentam a ocorrência reportada.'},
+  parcial:{label:'Parcialmente procedente', cls:'warning', desc:'Parte relevante dos fatos foi confirmada.'},
+  nao_procedente:{label:'Não procedente', cls:'good', desc:'As evidências não sustentam a ocorrência reportada.'},
+  inconclusiva:{label:'Inconclusiva', cls:'neutral', desc:'Não foi possível obter elementos suficientes para uma conclusão.'}
+};
+
+var STATUS_ORDER = ['recebido','triagem','investigacao','concluido'];
+var STATUS_INFO = {
+  recebido:{label:'Recebido'},
+  triagem:{label:'Em triagem'},
+  investigacao:{label:'Em investigação'},
+  concluido:{label:'Concluído'}
+};
+
+var PRAZOS = [
+  {etapa:'Registro', ref:'Imediato'},
+  {etapa:'Triagem inicial', ref:'Até 5 dias úteis'},
+  {etapa:'Definição sobre investigação', ref:'Até 10 dias úteis, salvo casos excepcionais'},
+  {etapa:'Investigação', ref:'Conforme complexidade e risco'},
+  {etapa:'Atualização ao denunciante', ref:'Quando houver informação relevante e for possível fazê-lo'}
+];
+
+/* ====================== state & persistence ====================== */
+var STATE = null;
+try{ STATE = JSON.parse(document.getElementById('state-data').textContent); }catch(e){ STATE = {cases:[]}; }
+
+var artifactApi = null;
+var artifactChecked = false;
+var readOnlyMode = false;
+var localOnly = false; // true once we know there is no artifact capability at all
+
+if (window.claude && typeof window.claude.use === 'function'){
+  window.claude.use('artifact').then(function(api){
+    artifactApi = api;
+    artifactChecked = true;
+    if(!api){ localOnly = true; renderChrome(); }
+  }).catch(function(){ artifactChecked = true; localOnly = true; renderChrome(); });
+  setTimeout(function(){ if(!artifactChecked){ artifactChecked = true; localOnly = true; renderChrome(); } }, 10500);
+} else {
+  artifactChecked = true; localOnly = true;
+}
+
+function esc(s){
+  if(s===null||s===undefined) return '';
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+function nl2br(s){ return esc(s).replace(/\n/g,'<br>'); }
+function nowISO(){ return new Date().toISOString(); }
+function fmtDate(iso){
+  if(!iso) return '—';
+  var d = new Date(iso);
+  return d.toLocaleDateString('pt-BR',{day:'2-digit',month:'short',year:'numeric'});
+}
+function fmtDateTime(iso){
+  if(!iso) return '—';
+  var d = new Date(iso);
+  return d.toLocaleDateString('pt-BR',{day:'2-digit',month:'short',year:'numeric'}) + ' às ' + d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
+}
+function daysBetween(a,b){ if(!a||!b) return null; return Math.round((new Date(b)-new Date(a))/86400000); }
+
+function genProtocolo(){
+  var year = new Date().getFullYear();
+  var n, p;
+  do { n = String(Math.floor(100000+Math.random()*900000)); p = 'EP-'+year+'-'+n; }
+  while (STATE.cases.some(function(c){ return c.protocolo===p; }));
+  return p;
+}
+function genAccessCode(){
+  var chars='ABCDEFGHJKMNPQRSTUVWXYZ23456789', s='';
+  for(var i=0;i<6;i++) s+=chars[Math.floor(Math.random()*chars.length)];
+  return s;
+}
+
+function findCase(protocolo, code){
+  protocolo = (protocolo||'').trim().toUpperCase();
+  code = (code||'').trim().toUpperCase();
+  return STATE.cases.find(function(c){ return c.protocolo.toUpperCase()===protocolo && c.accessCode.toUpperCase()===code; }) || null;
+}
+function caseById(id){ return STATE.cases.find(function(c){ return c.id===id; }) || null; }
+
+var HEAD_HTML = `<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Canal de Ética Espaço Prime</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  color-scheme: light;
+  --paper:#F7F5F0;
+  --surface:#FFFFFF;
+  --surface-2:#FBFAF7;
+  --ink:#17223B;
+  --ink-2:#4B5468;
+  --ink-3:#8B93A3;
+  --border:rgba(23,34,59,0.12);
+  --border-strong:rgba(23,34,59,0.24);
+  --accent:#0F6B5C;
+  --accent-ink:#FFFFFF;
+  --accent-soft:#E4F1EE;
+  --good:#0ca30c;
+  --warning:#c98500;
+  --serious:#c85a37;
+  --critical:#c23636;
+  --cat-1:#2a78d6; --cat-2:#c85a2a; --cat-3:#1a9c6c; --cat-4:#b8790a; --cat-5:#c15f8a;
+  --shadow: 0 1px 2px rgba(23,34,59,.06), 0 10px 28px -14px rgba(23,34,59,.22);
+  --focus-ring: 0 0 0 3px rgba(15,107,92,.35);
+  --radius: 14px;
+  --radius-sm: 9px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme: dark;
+    --paper:#0D131E;
+    --surface:#161F2E;
+    --surface-2:#121A27;
+    --ink:#F2F1EC;
+    --ink-2:#BAC1D0;
+    --ink-3:#828CA0;
+    --border:rgba(242,241,236,0.14);
+    --border-strong:rgba(242,241,236,0.26);
+    --accent:#49C2AA;
+    --accent-ink:#082019;
+    --accent-soft:rgba(73,194,170,0.16);
+    --good:#3fcf5f;
+    --warning:#e0aa3a;
+    --serious:#e8895f;
+    --critical:#e8615f;
+    --cat-1:#5b9bea; --cat-2:#e08252; --cat-3:#39bf8f; --cat-4:#d99f30; --cat-5:#e087ac;
+    --shadow: 0 1px 2px rgba(0,0,0,.4), 0 14px 34px -16px rgba(0,0,0,.65);
+    --focus-ring: 0 0 0 3px rgba(73,194,170,.4);
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme: dark;
+  --paper:#0D131E;
+  --surface:#161F2E;
+  --surface-2:#121A27;
+  --ink:#F2F1EC;
+  --ink-2:#BAC1D0;
+  --ink-3:#828CA0;
+  --border:rgba(242,241,236,0.14);
+  --border-strong:rgba(242,241,236,0.26);
+  --accent:#49C2AA;
+  --accent-ink:#082019;
+  --accent-soft:rgba(73,194,170,0.16);
+  --good:#3fcf5f;
+  --warning:#e0aa3a;
+  --serious:#e8895f;
+  --critical:#e8615f;
+  --cat-1:#5b9bea; --cat-2:#e08252; --cat-3:#39bf8f; --cat-4:#d99f30; --cat-5:#e087ac;
+  --shadow: 0 1px 2px rgba(0,0,0,.4), 0 14px 34px -16px rgba(0,0,0,.65);
+  --focus-ring: 0 0 0 3px rgba(73,194,170,.4);
+}
+
+*,*::before,*::after{box-sizing:border-box;}
+html{-webkit-text-size-adjust:100%;}
+body{
+  margin:0;
+  background:var(--paper);
+  color:var(--ink);
+  font-family:'Source Sans 3', ui-sans-serif, system-ui, -apple-system, sans-serif;
+  font-size:16px;
+  line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3,h4{
+  font-family:'Fraunces', Georgia, 'Times New Roman', serif;
+  font-weight:600;
+  line-height:1.15;
+  margin:0 0 .5em;
+  text-wrap:balance;
+  color:var(--ink);
+}
+p{margin:0 0 1em;}
+a{color:var(--accent);}
+::selection{background:var(--accent-soft);}
+:focus-visible{outline:none; box-shadow:var(--focus-ring); border-radius:6px;}
+button{font-family:inherit;}
+img,svg{display:block;max-width:100%;}
+.tabular{font-variant-numeric:tabular-nums;}
+
+.container{max-width:1080px;margin:0 auto;padding:0 24px;}
+.container-narrow{max-width:760px;margin:0 auto;padding:0 24px;}
+
+.boot{padding:80px 24px;text-align:center;color:var(--ink-3);font-size:15px;}
+
+/* ---------- topbar ---------- */
+.topbar{
+  position:sticky;top:0;z-index:40;
+  background:color-mix(in srgb, var(--paper) 88%, transparent);
+  backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--border);
+}
+.topbar-inner{
+  max-width:1080px;margin:0 auto;padding:14px 24px;
+  display:flex;align-items:center;gap:20px;
+}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--ink);flex:0 0 auto;}
+.brand-mark{
+  width:32px;height:32px;border-radius:9px;background:var(--ink);color:var(--paper);
+  display:flex;align-items:center;justify-content:center;flex:0 0 auto;
+}
+.brand-mark svg{width:17px;height:17px;}
+.brand-text{display:flex;flex-direction:column;line-height:1.1;}
+.brand-text b{font-family:'Fraunces',serif;font-size:15.5px;font-weight:600;}
+.brand-text span{font-size:11px;color:var(--ink-3);letter-spacing:.03em;}
+.nav{display:flex;align-items:center;gap:4px;margin-left:auto;flex-wrap:wrap;}
+.nav a{
+  text-decoration:none;color:var(--ink-2);font-size:14.5px;font-weight:600;
+  padding:8px 12px;border-radius:8px;white-space:nowrap;
+}
+.nav a:hover{background:var(--surface-2);color:var(--ink);}
+.nav a.active{background:var(--ink);color:var(--paper);}
+.nav a.subtle{color:var(--ink-3);font-weight:600;font-size:13px;}
+
+/* ---------- buttons ---------- */
+.btn{
+  appearance:none;border:1px solid var(--border-strong);background:var(--surface);
+  color:var(--ink);font-weight:600;font-size:14.5px;padding:11px 18px;border-radius:10px;
+  cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  text-decoration:none;line-height:1.2;transition:transform .06s ease, background .15s ease;
+}
+.btn:hover{background:var(--surface-2);}
+.btn:active{transform:translateY(1px);}
+.btn-primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);}
+.btn-primary:hover{filter:brightness(1.06);}
+.btn-ghost{background:transparent;border-color:transparent;color:var(--ink-2);}
+.btn-ghost:hover{background:var(--surface-2);color:var(--ink);}
+.btn-danger{color:var(--critical);border-color:color-mix(in srgb, var(--critical) 45%, var(--border-strong));}
+.btn-sm{padding:7px 12px;font-size:13.5px;border-radius:8px;}
+.btn-block{width:100%;}
+.btn[disabled]{opacity:.45;cursor:not-allowed;}
+.btn svg{width:15px;height:15px;flex:0 0 auto;}
+
+/* ---------- cards / layout ---------- */
+.card{
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
+  padding:22px;box-shadow:var(--shadow);
+}
+.card + .card{margin-top:16px;}
+.section-title{
+  font-family:'Fraunces',serif;font-size:19px;font-weight:600;margin:0 0 4px;
+}
+.section-hint{color:var(--ink-3);font-size:13.5px;margin:0 0 16px;}
+.hr{border:none;border-top:1px solid var(--border);margin:20px 0;}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+@media (max-width:640px){.grid-2{grid-template-columns:1fr;}}
+
+/* ---------- forms ---------- */
+.field{margin-bottom:16px;}
+.field label{display:block;font-weight:600;font-size:14px;margin-bottom:6px;color:var(--ink);}
+.field .req{color:var(--critical);}
+.field-hint{font-size:12.5px;color:var(--ink-3);margin-top:5px;}
+input[type=text],input[type=email],input[type=tel],input[type=password],select,textarea{
+  width:100%;font-family:inherit;font-size:15px;color:var(--ink);
+  background:var(--surface-2);border:1px solid var(--border-strong);border-radius:9px;
+  padding:11px 12px;line-height:1.4;
+}
+textarea{resize:vertical;min-height:92px;}
+input:focus-visible,select:focus-visible,textarea:focus-visible{
+  outline:none;box-shadow:var(--focus-ring);border-color:var(--accent);
+}
+.choice-row{display:flex;gap:10px;flex-wrap:wrap;}
+.choice-card{
+  flex:1 1 160px;border:1px solid var(--border-strong);border-radius:10px;padding:12px 14px;
+  cursor:pointer;background:var(--surface-2);display:flex;align-items:flex-start;gap:10px;
+}
+.choice-card input{width:auto;margin:3px 0 0;}
+.choice-card.active{border-color:var(--accent);background:var(--accent-soft);}
+.checkline{display:flex;gap:10px;align-items:flex-start;font-size:14px;color:var(--ink-2);}
+.checkline input{width:auto;margin-top:3px;}
+
+/* ---------- badges ---------- */
+.badge{
+  display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:700;
+  padding:4px 10px;border-radius:100px;white-space:nowrap;letter-spacing:.01em;
+}
+.badge .dot{width:7px;height:7px;border-radius:50%;flex:0 0 auto;}
+.badge-neutral{background:var(--surface-2);color:var(--ink-2);border:1px solid var(--border-strong);}
+.badge-good{background:color-mix(in srgb, var(--good) 14%, var(--surface));color:color-mix(in srgb, var(--good) 70%, var(--ink));border:1px solid color-mix(in srgb, var(--good) 35%, transparent);}
+.badge-good .dot{background:var(--good);}
+.badge-warning{background:color-mix(in srgb, var(--warning) 16%, var(--surface));color:color-mix(in srgb, var(--warning) 65%, var(--ink));border:1px solid color-mix(in srgb, var(--warning) 40%, transparent);}
+.badge-warning .dot{background:var(--warning);}
+.badge-serious{background:color-mix(in srgb, var(--serious) 16%, var(--surface));color:color-mix(in srgb, var(--serious) 60%, var(--ink));border:1px solid color-mix(in srgb, var(--serious) 40%, transparent);}
+.badge-serious .dot{background:var(--serious);}
+.badge-critical{background:color-mix(in srgb, var(--critical) 16%, var(--surface));color:color-mix(in srgb, var(--critical) 60%, var(--ink));border:1px solid color-mix(in srgb, var(--critical) 40%, transparent);}
+.badge-critical .dot{background:var(--critical);}
+.badge-cat{border:1px solid var(--border-strong);}
+.badge-status{background:var(--ink);color:var(--paper);}
+.badge-status.st-recebido{background:var(--ink-3);}
+.badge-status.st-triagem{background:color-mix(in srgb, var(--accent) 60%, var(--ink-3));}
+.badge-status.st-investigacao{background:var(--accent);color:var(--accent-ink);}
+.badge-status.st-concluido{background:var(--ink);}
+
+/* ---------- stepper ---------- */
+.stepper{display:flex;align-items:center;margin:8px 0 4px;}
+.step{display:flex;flex-direction:column;align-items:center;gap:8px;flex:1;position:relative;}
+.step .node{width:26px;height:26px;border-radius:50%;background:var(--surface-2);border:2px solid var(--border-strong);
+  display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--ink-3);z-index:1;}
+.step .label{font-size:12.5px;font-weight:600;color:var(--ink-3);text-align:center;}
+.step .line{position:absolute;top:13px;left:-50%;width:100%;height:2px;background:var(--border-strong);z-index:0;}
+.step:first-child .line{display:none;}
+.step.done .node{background:var(--ink);border-color:var(--ink);color:var(--paper);}
+.step.done .line{background:var(--ink);}
+.step.done .label{color:var(--ink);}
+.step.current .node{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);}
+.step.current .label{color:var(--ink);}
+
+/* ---------- table / list ---------- */
+.table-wrap{overflow-x:auto;border:1px solid var(--border);border-radius:var(--radius);}
+table{width:100%;border-collapse:collapse;font-size:14px;min-width:720px;}
+thead th{
+  text-align:left;font-size:11.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--ink-3);
+  padding:11px 14px;border-bottom:1px solid var(--border);background:var(--surface-2);
+}
+tbody td{padding:13px 14px;border-bottom:1px solid var(--border);vertical-align:middle;}
+tbody tr:last-child td{border-bottom:none;}
+tbody tr.row-link{cursor:pointer;}
+tbody tr.row-link:hover{background:var(--surface-2);}
+.mono{font-variant-numeric:tabular-nums;letter-spacing:.02em;font-weight:600;}
+
+/* ---------- stat tiles ---------- */
+.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;}
+@media (max-width:860px){.stat-grid{grid-template-columns:repeat(2,1fr);}}
+.stat-tile{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px 20px;box-shadow:var(--shadow);}
+.stat-tile .stat-label{font-size:12.5px;color:var(--ink-3);font-weight:600;text-transform:uppercase;letter-spacing:.03em;margin-bottom:8px;}
+.stat-tile .stat-value{font-family:'Fraunces',serif;font-size:30px;font-weight:600;line-height:1;}
+.stat-tile .stat-sub{font-size:12.5px;color:var(--ink-3);margin-top:8px;}
+
+/* ---------- bars ---------- */
+.bar-row{display:grid;grid-template-columns:minmax(150px,max-content) 1fr 40px;align-items:center;gap:12px;padding:7px 0;}
+.bar-row .bar-name{font-size:13.5px;color:var(--ink-2);min-width:0;}
+.bar-row .bar-name .badge{white-space:normal;}
+.bar-track{height:10px;border-radius:6px;background:var(--surface-2);overflow:hidden;}
+.bar-fill{height:100%;border-radius:6px;}
+.bar-row .bar-count{font-size:13px;font-weight:700;text-align:right;font-variant-numeric:tabular-nums;}
+@media (max-width:640px){.bar-row{grid-template-columns:1fr;row-gap:6px;}.bar-row .bar-count{text-align:left;}}
+
+/* ---------- misc ---------- */
+.banner{border-radius:12px;padding:14px 16px;font-size:14px;display:flex;gap:10px;align-items:flex-start;}
+.banner svg{width:18px;height:18px;flex:0 0 auto;margin-top:1px;}
+.banner-info{background:var(--accent-soft);color:color-mix(in srgb, var(--accent) 55%, var(--ink));}
+.banner-warn{background:color-mix(in srgb, var(--warning) 16%, var(--surface));color:color-mix(in srgb, var(--warning) 55%, var(--ink));border:1px solid color-mix(in srgb, var(--warning) 40%, transparent);}
+.banner-good{background:color-mix(in srgb, var(--good) 14%, var(--surface));color:color-mix(in srgb, var(--good) 55%, var(--ink));}
+.proto-code{
+  font-family:'Fraunces',serif;font-weight:600;font-size:26px;letter-spacing:.02em;
+}
+.access-code{font-variant-numeric:tabular-nums;letter-spacing:.12em;font-weight:700;}
+.msg{border-left:3px solid var(--border-strong);padding:8px 0 8px 14px;margin-bottom:10px;}
+.msg.equipe{border-color:var(--accent);}
+.msg.denunciante{border-color:var(--ink-3);}
+.msg .msg-meta{font-size:11.5px;color:var(--ink-3);margin-bottom:3px;font-weight:600;text-transform:uppercase;letter-spacing:.03em;}
+.msg .msg-text{font-size:14.5px;color:var(--ink);white-space:pre-wrap;}
+.toast{
+  position:fixed;left:50%;bottom:26px;transform:translateX(-50%) translateY(10px);
+  background:var(--ink);color:var(--paper);padding:12px 18px;border-radius:10px;font-size:14px;font-weight:600;
+  box-shadow:var(--shadow);opacity:0;pointer-events:none;transition:opacity .2s ease, transform .2s ease;z-index:100;
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+.overlay{
+  position:fixed;inset:0;background:color-mix(in srgb, var(--paper) 80%, transparent);
+  display:flex;align-items:center;justify-content:center;z-index:200;font-weight:600;color:var(--ink-2);
+  backdrop-filter:blur(2px);
+}
+.spinner{width:18px;height:18px;border-radius:50%;border:2.5px solid var(--border-strong);border-top-color:var(--accent);
+  animation:spin .7s linear infinite;margin-right:10px;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.footer{padding:40px 24px 60px;text-align:center;color:var(--ink-3);font-size:13px;}
+.footer a{color:var(--ink-3);}
+.kicker{font-size:12.5px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--accent);margin-bottom:10px;}
+.filter-row{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px;}
+.filter-row select{width:auto;min-width:160px;}
+.empty{color:var(--ink-3);font-size:14px;padding:24px 0;text-align:center;}
+.readonly-note{font-size:12.5px;color:var(--ink-3);margin-top:6px;}
+.legend{display:flex;flex-wrap:wrap;gap:14px;margin-top:14px;}
+.legend-item{display:flex;align-items:center;gap:7px;font-size:12.5px;color:var(--ink-2);}
+.legend-item .sw{width:10px;height:10px;border-radius:3px;}
+@media (prefers-reduced-motion:reduce){.spinner{animation:none;}.toast{transition:none;}}
+</style>
+</head>`;
+
+/* ---- build the full replacement document (canonical-source pattern) ----
+   HEAD_HTML is a static JS constant (not a live DOM read) so a republish
+   can never bake in anything the hosting shell may have injected into
+   <head> at view time. The <script id="app-logic"> element is never
+   mutated by any of our own code, so reading its own textContent back
+   returns the exact static source it was parsed with. */
+function buildDocument(state){
+  var headHtml = HEAD_HTML;
+  var appLogicSrc = document.getElementById('app-logic').textContent;
+  var json = JSON.stringify(state).replace(/</g, '\\u003C');
+  var html = '<!doctype html>\n<html lang="pt-BR">' + headHtml +
+    '<body>\n<div id="app"><div class="boot">Carregando canal…</div></div>\n' +
+    '<script type="application/json" id="state-data">\n' + json + '\n<' + '/script>\n' +
+    '<script id="app-logic">' + appLogicSrc + '<' + '/script>\n' +
+    '</body></html>';
+  return html;
+}
+
+var pendingStash = null;
+function stashNav(extra){
+  var s = Object.assign({hash:location.hash, scroll:window.scrollY}, extra||{});
+  try{ sessionStorage.setItem('ep_resume', JSON.stringify(s)); }catch(e){}
+}
+
+function commit(mutatorFn, opts){
+  opts = opts || {};
+  mutatorFn(STATE);
+  if (localOnly || readOnlyMode || !artifactApi){
+    render();
+    if (readOnlyMode) toast('Visualização somente leitura nesta demonstração — alteração não foi salva.');
+    return;
+  }
+  stashNav(opts.stash);
+  showOverlay(true);
+  artifactApi.publish(buildDocument(STATE)).then(function(){
+    /* view reloads automatically on success */
+  }).catch(function(err){
+    showOverlay(false);
+    var code = err && err.code;
+    if (code === 'not_writer' || code === 'not_granted'){
+      readOnlyMode = true;
+      toast('Este link está em modo de visualização — mudanças não serão salvas para outras pessoas.');
+      render();
+    } else if (code === 'conflict'){
+      /* runtime reloads this view to the winning version */
+    } else {
+      toast('Não foi possível salvar agora. A alteração ficou só nesta tela.');
+      render();
+    }
+  });
+}
+
+function showOverlay(on){
+  var ov = document.getElementById('ep-overlay');
+  if(on){
+    if(!ov){
+      ov = document.createElement('div');
+      ov.id='ep-overlay'; ov.className='overlay';
+      ov.innerHTML = '<span class="spinner"></span> Salvando alterações…';
+      document.body.appendChild(ov);
+    }
+  } else if(ov){ ov.remove(); }
+}
+
+var toastTimer = null;
+function toast(msg){
+  var t = document.getElementById('ep-toast');
+  if(!t){ t=document.createElement('div'); t.id='ep-toast'; t.className='toast'; document.body.appendChild(t); }
+  t.textContent = msg;
+  requestAnimationFrame(function(){ t.classList.add('show'); });
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(function(){ t.classList.remove('show'); }, 3200);
+}
+
+/* ====================== routing ====================== */
+function route(){
+  var h = (location.hash || '#home').replace(/^#/,'');
+  var parts = h.split('/').filter(Boolean);
+  return parts.length ? parts : ['home'];
+}
+window.addEventListener('hashchange', render);
+
+/* ====================== reusable bits ====================== */
+function catBadge(catId){
+  var found = CAT_INDEX[catId];
+  if(!found) return '<span class="badge badge-neutral">Não informado</span>';
+  return '<span class="badge badge-cat" style="background:color-mix(in srgb, var('+found.group.color+') 14%, var(--surface));color:var('+found.group.color+');border-color:color-mix(in srgb, var('+found.group.color+') 40%, transparent);"><span class="dot" style="background:var('+found.group.color+')"></span>'+esc(found.item.label)+'</span>';
+}
+function riskBadge(risk){
+  if(!risk) return '<span class="badge badge-neutral">Não classificado</span>';
+  var r = RISK_INFO[risk];
+  return '<span class="badge badge-'+r.cls+'"><span class="dot"></span>'+esc(r.label)+'</span>';
+}
+function conclusaoBadge(c){
+  if(!c) return '<span class="badge badge-neutral">Em aberto</span>';
+  var r = CONCLUSAO_INFO[c];
+  var cls = r.cls === 'neutral' ? 'neutral' : r.cls;
+  return '<span class="badge badge-'+cls+'"><span class="dot"></span>'+esc(r.label)+'</span>';
+}
+function statusBadge(s){
+  var i = STATUS_INFO[s] || {label:s};
+  return '<span class="badge badge-status st-'+esc(s)+'">'+esc(i.label)+'</span>';
+}
+function stepperHTML(status){
+  var idx = STATUS_ORDER.indexOf(status);
+  return '<div class="stepper">' + STATUS_ORDER.map(function(s,i){
+    var cls = i < idx ? 'done' : (i===idx ? 'current' : '');
+    return '<div class="step '+cls+'"><span class="line"></span><span class="node">'+(i<idx?'✓':(i+1))+'</span><span class="label">'+esc(STATUS_INFO[s].label)+'</span></div>';
+  }).join('') + '</div>';
+}
+function iconShield(){ return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3.5v5.2c0 4.6-3 7.9-7 9.3-4-1.4-7-4.7-7-9.3V6.5L12 3z"/></svg>'; }
+function iconInfo(){ return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5.5M12 8v.01"/></svg>'; }
+function iconLock(){ return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4.5" y="10.5" width="15" height="9.5" rx="2"/><path d="M7.5 10.5V7a4.5 4.5 0 0 1 9 0v3.5"/></svg>'; }
+function iconWarn(){ return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4 2.5 20h19L12 4z"/><path d="M12 10.5v4.2M12 17.5v.01"/></svg>'; }
+
+/* ====================== topbar / chrome ====================== */
+function topbarHTML(active){
+  function navItem(hash, label, extraClass){
+    var isActive = active===hash;
+    return '<a href="#'+hash+'" class="'+(isActive?'active ':'')+(extraClass||'')+'">'+label+'</a>';
+  }
+  return '' +
+  '<div class="topbar"><div class="topbar-inner">' +
+    '<a href="#home" class="brand"><span class="brand-mark">'+iconShield()+'</span>' +
+      '<span class="brand-text"><b>Canal de Ética</b><span>Espaço Prime · colaboradores</span></span></a>' +
+    '<nav class="nav">' +
+      navItem('home','Início') +
+      navItem('novo','Registrar denúncia') +
+      navItem('protocolo','Acompanhar protocolo') +
+      navItem('admin','Área interna','subtle') +
+    '</nav>' +
+  '</div></div>';
+}
+
+function protoBanner(){
+  return '<div class="container" style="padding-top:16px;">' +
+    '<div class="banner banner-warn">'+iconWarn()+'<div><strong>Protótipo de demonstração — uso interno (colaboradores).</strong> Este canal não deve ser usado para denúncias reais. É uma simulação para validar o fluxo descrito no Manual do Canal de Ética antes de contratar uma plataforma real — e, como toda página deste tipo, os dados ficam legíveis a quem tiver o link, então não há garantia real de sigilo, nem verificação real de que quem acessa é colaborador. Uma Ouvidoria separada, para clientes, fornecedores e demais pessoas de fora da empresa, está prevista como próximo passo.</div></div>' +
+  '</div>';
+}
+
+function renderChrome(){
+  /* re-render only when the local/readonly banners state changes without touching route content unnecessarily */
+  render();
+}
+
+/* ====================== VIEW: home ====================== */
+function viewHome(){
+  return topbarHTML('home') + protoBanner() +
+  '<header class="container" style="padding:56px 24px 40px;">' +
+    '<div style="max-width:700px;">' +
+      '<div class="kicker">Canal de Ética e Denúncias · uso interno</div>' +
+      '<h1 style="font-size:clamp(30px,4.4vw,46px);">Se algo estiver errado,<br>você pode falar.</h1>' +
+      '<p style="font-size:17px;color:var(--ink-2);max-width:600px;">A Espaço Prime disponibiliza este canal para que colaboradores possam comunicar, de boa-fé, situações que possam violar a lei, nossas políticas internas ou princípios éticos — de forma segura, confidencial e, se preferir, anônima.</p>' +
+      '<div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:24px;">' +
+        '<a href="#novo" class="btn btn-primary">Registrar uma manifestação</a>' +
+        '<a href="#protocolo" class="btn">Acompanhar um protocolo</a>' +
+      '</div>' +
+    '</div>' +
+  '</header>' +
+  '<section class="container" style="padding-bottom:8px;">' +
+    '<div class="grid-2" style="grid-template-columns:repeat(4,1fr);">' +
+      principleCard(iconLock(),'Confidencialidade','As informações só são acessadas por pessoas autorizadas, na medida necessária à apuração.') +
+      principleCard(iconShield(),'Anonimato possível','Você pode se identificar ou permanecer anônimo(a), e ainda assim acompanhar o caso pelo protocolo.') +
+      principleCard(iconInfo(),'Não retaliação','Denunciar de boa-fé não gera retaliação. Toda manifestação é tratada com seriedade e imparcialidade.') +
+      principleCard(iconWarn(),'Boa-fé','O canal deve ser usado com responsabilidade — denúncias deliberadamente falsas podem ser tratadas como violação de conduta.') +
+    '</div>' +
+  '</section>' +
+  '<section class="container" style="padding:36px 24px;">' +
+    '<div class="card">' +
+      '<div class="section-title">Quem pode utilizar o canal</div>' +
+      '<p style="color:var(--ink-2);margin:0;">Este canal é de uso exclusivo dos colaboradores da Espaço Prime — efetivos, aprendizes, estagiários e temporários.</p>' +
+      '<p class="field-hint" style="margin-top:8px;">Clientes, fornecedores, parceiros e demais pessoas de fora da empresa não usam este canal — está prevista uma Ouvidoria própria para esse público, em um próximo passo.</p>' +
+      '<div class="hr"></div>' +
+      '<div class="section-title" style="font-size:16px;">O que pode ser denunciado</div>' +
+      '<div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;">' +
+        CATEGORY_GROUPS.map(function(g){ return '<span class="badge badge-cat" style="background:color-mix(in srgb, var('+g.color+') 12%, var(--surface));color:var('+g.color+');border-color:color-mix(in srgb, var('+g.color+') 35%, transparent);">'+esc(g.label)+'</span>'; }).join('') +
+      '</div>' +
+      '<p class="field-hint" style="margin-top:12px;">Questões rotineiras de atendimento, dúvidas operacionais ou pedidos administrativos devem, preferencialmente, seguir pelos canais específicos — a não ser que também envolvam fraude, assédio, retaliação, corrupção ou outra questão de integridade.</p>' +
+    '</div>' +
+  '</section>' +
+  footerHTML();
+}
+function principleCard(icon, title, text){
+  return '<div class="card" style="padding:18px;">' +
+    '<div style="width:34px;height:34px;border-radius:9px;background:var(--accent-soft);color:var(--accent);display:flex;align-items:center;justify-content:center;margin-bottom:12px;">'+icon+'</div>' +
+    '<div style="font-weight:700;font-size:14.5px;margin-bottom:5px;">'+esc(title)+'</div>' +
+    '<div style="font-size:13.5px;color:var(--ink-2);">'+esc(text)+'</div>' +
+  '</div>';
+}
+function footerHTML(){
+  return '<div class="footer">Espaço Prime · Canal de Ética e Denúncias — protótipo funcional a partir do Manual Oficial v1.0. ' +
+    'Base de governança sujeita a aprovação jurídica antes de qualquer uso real. <br>' +
+    '<a href="#admin">Acessar ambiente interno →</a></div>';
+}
+
+/* ====================== VIEW: novo (form) ====================== */
+var formDraft = { anonymous:true, categoria:'', nome:'', email:'', area:'', telefone:'', dataFato:'', local:'', pessoas:'', descricao:'', testemunhas:'', evidencias:'', anexos:'', termo:false };
+var formError = '';
+
+function viewNovo(){
+  var catOptions = CATEGORY_GROUPS.map(function(g){
+    return '<optgroup label="'+esc(g.label)+'">' + g.items.map(function(it){
+      return '<option value="'+it.id+'"'+(formDraft.categoria===it.id?' selected':'')+'>'+esc(it.label)+'</option>';
+    }).join('') + '</optgroup>';
+  }).join('');
+
+  return topbarHTML('novo') + protoBanner() +
+  '<div class="container-narrow" style="padding:36px 24px 60px;">' +
+    '<div class="kicker">Nova manifestação</div>' +
+    '<h1 style="font-size:28px;">Registrar uma denúncia</h1>' +
+    '<p style="color:var(--ink-2);">Relate os fatos de forma objetiva. Você não precisa ter certeza da conclusão jurídica ou disciplinar do caso — o importante é relatar, de boa-fé, o que você sabe.</p>' +
+    (formError ? '<div class="banner banner-warn" style="margin-bottom:16px;">'+iconWarn()+'<div>'+esc(formError)+'</div></div>' : '') +
+    '<form id="ep-form">' +
+      '<div class="card">' +
+        '<div class="section-title">Identificação</div>' +
+        '<div class="section-hint">Você decide se quer se identificar. O canal permite manifestações anônimas.</div>' +
+        '<div class="choice-row" style="margin-bottom:14px;">' +
+          '<label class="choice-card '+(formDraft.anonymous?'active':'')+'"><input type="radio" name="anon" value="1" '+(formDraft.anonymous?'checked':'')+'><span><strong style="display:block;font-size:14px;">Permanecer anônimo(a)</strong><span style="font-size:12.5px;color:var(--ink-3);">Nenhum dado de identificação será solicitado.</span></span></label>' +
+          '<label class="choice-card '+(!formDraft.anonymous?'active':'')+'"><input type="radio" name="anon" value="0" '+(!formDraft.anonymous?'checked':'')+'><span><strong style="display:block;font-size:14px;">Me identificar</strong><span style="font-size:12.5px;color:var(--ink-3);">Ajuda a equipe a manter contato direto, se necessário.</span></span></label>' +
+        '</div>' +
+        (!formDraft.anonymous ? (
+          '<div class="grid-2">' +
+            '<div class="field"><label>Nome</label><input type="text" name="nome" value="'+esc(formDraft.nome)+'"></div>' +
+            '<div class="field"><label>E-mail corporativo</label><input type="email" name="email" value="'+esc(formDraft.email)+'"></div>' +
+          '</div>' +
+          '<div class="grid-2">' +
+            '<div class="field"><label>Área ou departamento</label><input type="text" name="area" placeholder="ex.: Comercial, Logística, Financeiro" value="'+esc(formDraft.area)+'"></div>' +
+            '<div class="field"><label>Telefone (opcional)</label><input type="tel" name="telefone" value="'+esc(formDraft.telefone)+'"></div>' +
+          '</div>'
+        ) : '') +
+      '</div>' +
+
+      '<div class="card">' +
+        '<div class="section-title">Tipo de ocorrência</div>' +
+        '<div class="field" style="margin-bottom:0;"><label>Categoria <span class="req">*</span></label>' +
+          '<select name="categoria" required>' + '<option value="">Selecione a categoria que melhor descreve a situação</option>' + catOptions + '</select>' +
+        '</div>' +
+      '</div>' +
+
+      '<div class="card">' +
+        '<div class="section-title">Quando e onde</div>' +
+        '<div class="grid-2">' +
+          '<div class="field"><label>Data ou período aproximado</label><input type="text" name="dataFato" placeholder="ex.: em julho/2026, ou 14/08/2026" value="'+esc(formDraft.dataFato)+'"></div>' +
+          '<div class="field"><label>Local ou área relacionada</label><input type="text" name="local" placeholder="ex.: CD São José, equipe Comercial" value="'+esc(formDraft.local)+'"></div>' +
+        '</div>' +
+      '</div>' +
+
+      '<div class="card">' +
+        '<div class="section-title">O que aconteceu</div>' +
+        '<div class="field"><label>Pessoas envolvidas</label><textarea name="pessoas" placeholder="Quem esteve envolvido, na medida do que você souber (cargo, área ou nome).">'+esc(formDraft.pessoas)+'</textarea></div>' +
+        '<div class="field"><label>Descrição dos fatos <span class="req">*</span></label><textarea name="descricao" required placeholder="O que aconteceu, quando, onde e quem estava envolvido, sempre que você souber." style="min-height:130px;">'+esc(formDraft.descricao)+'</textarea></div>' +
+        '<div class="field"><label>Testemunhas</label><textarea name="testemunhas" placeholder="Há testemunhas? Quem, se souber.">'+esc(formDraft.testemunhas)+'</textarea></div>' +
+        '<div class="field"><label>Documentos ou evidências</label><textarea name="evidencias" placeholder="Existem documentos, mensagens, imagens ou outros elementos que ajudem na apuração?">'+esc(formDraft.evidencias)+'</textarea></div>' +
+        '<div class="field" style="margin-bottom:0;"><label>Anexos (opcional)</label><textarea name="anexos" placeholder="Descreva os arquivos que você anexaria.">'+esc(formDraft.anexos)+'</textarea><div class="field-hint">Neste protótipo não é possível enviar arquivos reais — descreva o que você anexaria.</div></div>' +
+      '</div>' +
+
+      '<div class="banner banner-info">'+iconInfo()+'<div>Você não precisa ter certeza sobre a conclusão jurídica ou disciplinar do caso. Relate, de boa-fé, os fatos conhecidos e indique elementos que possam ajudar na apuração.</div></div>' +
+
+      '<div class="card">' +
+        '<label class="checkline"><input type="checkbox" name="termo" '+(formDraft.termo?'checked':'')+' required>' +
+          '<span>Declaro que as informações fornecidas refletem, de acordo com meu conhecimento, fatos ou suspeitas apresentados de boa-fé. Entendo que a Espaço Prime não tolera retaliação contra quem denuncia de boa-fé.</span>' +
+        '</label>' +
+      '</div>' +
+
+      '<button type="submit" class="btn btn-primary btn-block" style="padding:14px;font-size:15.5px;">Enviar manifestação</button>' +
+    '</form>' +
+  '</div>' +
+  footerHTML();
+}
+
+function submitForm(form){
+  var fd = new FormData(form);
+  var anonymous = fd.get('anon') === '1';
+  var categoria = fd.get('categoria') || '';
+  var descricao = (fd.get('descricao')||'').trim();
+  if(!categoria || !descricao || !fd.get('termo')){
+    formError = 'Selecione a categoria, descreva os fatos e confirme a declaração de boa-fé antes de enviar.';
+    formDraft = {
+      anonymous:anonymous, categoria:categoria,
+      nome:fd.get('nome')||'', email:fd.get('email')||'', area:fd.get('area')||'', telefone:fd.get('telefone')||'',
+      dataFato:fd.get('dataFato')||'', local:fd.get('local')||'', pessoas:fd.get('pessoas')||'',
+      descricao:descricao, testemunhas:fd.get('testemunhas')||'', evidencias:fd.get('evidencias')||'',
+      anexos:fd.get('anexos')||'', termo: !!fd.get('termo')
+    };
+    render();
+    return;
+  }
+  var protocolo = genProtocolo();
+  var accessCode = genAccessCode();
+  var id = 'c_' + Date.now().toString(36) + Math.random().toString(36).slice(2,7);
+  var ts = nowISO();
+  var novo = {
+    id:id, protocolo:protocolo, accessCode:accessCode, createdAt:ts,
+    anonymous:anonymous,
+    denunciante: anonymous ? null : {nome:fd.get('nome')||'', email:fd.get('email')||'', area:fd.get('area')||'', telefone:fd.get('telefone')||''},
+    categoria:categoria,
+    dataFato:fd.get('dataFato')||'', local:fd.get('local')||'', pessoasEnvolvidas:fd.get('pessoas')||'',
+    descricao:descricao, testemunhas:fd.get('testemunhas')||'', evidenciasDisponiveis:fd.get('evidencias')||'',
+    anexosDescricao:fd.get('anexos')||'',
+    status:'recebido', urgente:false, risco:null,
+    conflitoInteresse:{verificado:false, detalhe:''},
+    responsavel:'',
+    milestones:{recebidoEm:ts, triagemEm:null, investigacaoEm:null, concluidoEm:null},
+    evidenciasAnalisadas:'', diligencias:'',
+    conclusao:null, fundamentacao:'', medidasAdotadas:'',
+    log:[{ts:ts, tipo:'sistema', autor:'Sistema', texto:'Manifestação recebida e protocolo gerado.'}]
+  };
+  formDraft = { anonymous:true, categoria:'', nome:'', email:'', telefone:'', dataFato:'', local:'', pessoas:'', descricao:'', testemunhas:'', evidencias:'', anexos:'', termo:false };
+  formError = '';
+  lookupDraft = { protocolo:protocolo, accessCode:accessCode };
+  lookupResultId = id;
+  lookupError = '';
+  justSubmitted = true;
+  location.hash = '#protocolo';
+  commit(function(state){ state.cases.push(novo); }, { stash:{hash:'#protocolo', lookup:lookupDraft, resultId:id, justSubmitted:true} });
+}
+
+/* ====================== VIEW: protocolo (tracking) ====================== */
+var lookupDraft = { protocolo:'', accessCode:'' };
+var lookupResultId = null;
+var lookupError = '';
+var justSubmitted = false;
+var replyDraft = '';
+
+function viewProtocolo(){
+  var result = lookupResultId ? caseById(lookupResultId) : null;
+  return topbarHTML('protocolo') + protoBanner() +
+  '<div class="container-narrow" style="padding:36px 24px 60px;">' +
+    '<div class="kicker">Acompanhamento</div>' +
+    '<h1 style="font-size:28px;">Consultar protocolo</h1>' +
+    '<p style="color:var(--ink-2);">Informe o protocolo e o código de acesso recebidos no momento do envio da sua manifestação. Nenhum dos dois revela sua identidade.</p>' +
+    (justSubmitted ? '<div class="banner banner-good" style="margin-bottom:16px;">'+iconShield()+'<div><strong>Manifestação registrada com sucesso.</strong> Guarde o protocolo e o código de acesso abaixo — são a única forma de acompanhar o caso.</div></div>' : '') +
+    '<div class="card">' +
+      '<form id="ep-lookup">' +
+        '<div class="grid-2">' +
+          '<div class="field"><label>Número de protocolo</label><input type="text" name="protocolo" placeholder="EP-2026-000000" value="'+esc(lookupDraft.protocolo)+'" style="text-transform:uppercase;"></div>' +
+          '<div class="field"><label>Código de acesso</label><input type="text" name="accessCode" placeholder="6 caracteres" value="'+esc(lookupDraft.accessCode)+'" style="text-transform:uppercase;"></div>' +
+        '</div>' +
+        (lookupError ? '<div class="banner banner-warn" style="margin-bottom:14px;">'+iconWarn()+'<div>'+esc(lookupError)+'</div></div>' : '') +
+        '<button type="submit" class="btn btn-primary">Consultar</button>' +
+      '</form>' +
+    '</div>' +
+    (result ? protocolResultHTML(result) : '') +
+  '</div>' +
+  footerHTML();
+}
+
+function protocolResultHTML(c){
+  var visibleLog = c.log.filter(function(l){ return l.tipo!=='interno'; });
+  var identLabel = c.anonymous ? 'Manifestação anônima' : 'Manifestação identificada';
+  return '' +
+  '<div class="card" style="margin-top:20px;">' +
+    '<div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:14px;align-items:flex-start;">' +
+      '<div><div class="field-hint" style="margin:0 0 4px;">PROTOCOLO</div><div class="proto-code">'+esc(c.protocolo)+'</div></div>' +
+      '<div style="text-align:right;"><div class="field-hint" style="margin:0 0 4px;">CÓDIGO DE ACESSO</div><div class="access-code">'+esc(c.accessCode)+'</div></div>' +
+    '</div>' +
+    '<div class="hr"></div>' +
+    stepperHTML(c.status) +
+    '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:14px;">' + catBadge(c.categoria) + '<span class="badge badge-neutral">'+identLabel+'</span></div>' +
+    '<p class="field-hint" style="margin-top:14px;">Registrada em '+fmtDate(c.createdAt)+'.'+(c.status==='concluido' && c.milestones.concluidoEm ? ' Encerrada em '+fmtDate(c.milestones.concluidoEm)+'.' : '')+'</p>' +
+    (c.status==='concluido' && c.conclusao ? '<div style="margin-top:10px;">Resultado: '+conclusaoBadge(c.conclusao)+'</div>' : '') +
+  '</div>' +
+  '<div class="card">' +
+    '<div class="section-title" style="font-size:16px;">Comunicação</div>' +
+    '<div class="section-hint">Mensagens trocadas com a equipe responsável, preservando seu anonimato.</div>' +
+    (visibleLog.length ? visibleLog.map(function(l){
+      var cls = l.tipo==='mensagem_equipe' ? 'equipe' : (l.tipo==='mensagem_denunciante' ? 'denunciante' : '');
+      var who = l.tipo==='mensagem_equipe' ? 'Equipe do canal' : (l.tipo==='mensagem_denunciante' ? 'Você' : 'Sistema');
+      return '<div class="msg '+cls+'"><div class="msg-meta">'+who+' · '+fmtDateTime(l.ts)+'</div><div class="msg-text">'+nl2br(l.texto)+'</div></div>';
+    }).join('') : '<div class="empty">Nenhuma atualização registrada ainda.</div>') +
+    (c.status!=='concluido' ? (
+      '<div class="hr"></div>' +
+      '<form id="ep-reply">' +
+        '<div class="field"><label>Enviar uma mensagem para a equipe</label><textarea name="texto" placeholder="Adicione informações, responda a uma pergunta da equipe, etc.">'+esc(replyDraft)+'</textarea></div>' +
+        '<button type="submit" class="btn">Enviar mensagem</button>' +
+      '</form>'
+    ) : '') +
+  '</div>';
+}
+
+function lookupSubmit(form){
+  var fd = new FormData(form);
+  var protocolo = (fd.get('protocolo')||'').trim();
+  var accessCode = (fd.get('accessCode')||'').trim();
+  lookupDraft = {protocolo:protocolo, accessCode:accessCode};
+  var found = findCase(protocolo, accessCode);
+  if(!found){
+    lookupError = 'Não encontramos nenhuma manifestação com esse protocolo e código de acesso. Confira os dados e tente novamente.';
+    lookupResultId = null;
+  } else {
+    lookupError = '';
+    lookupResultId = found.id;
+  }
+  render();
+}
+
+function replySubmit(form, caseId){
+  var fd = new FormData(form);
+  var texto = (fd.get('texto')||'').trim();
+  if(!texto) return;
+  replyDraft = '';
+  commit(function(state){
+    var c = caseById(caseId);
+    if(!c) return;
+    c.log.push({ts:nowISO(), tipo:'mensagem_denunciante', autor:'Denunciante', texto:texto});
+  }, { stash:{hash:'#protocolo', lookup:lookupDraft, resultId:caseId} });
+  toast('Mensagem enviada à equipe do canal.');
+}
+
+/* ====================== VIEW: admin ====================== */
+var adminFilters = { status:'', categoria:'', risco:'' };
+var internalNoteDraft = '';
+var equipeMsgDraft = '';
+
+function isAdminAuthed(){
+  try{ return sessionStorage.getItem('ep_admin_authed')==='1'; }catch(e){ return false; }
+}
+function setAdminAuthed(){
+  try{ sessionStorage.setItem('ep_admin_authed','1'); }catch(e){}
+}
+
+function viewAdmin(parts){
+  if(!isAdminAuthed()) return viewAdminGate();
+  var sub = parts[1] || 'dashboard';
+  if(sub==='caso' && parts[2]) return viewAdminCaso(parts[2]);
+  if(sub==='casos') return viewAdminCasos();
+  return viewAdminDashboard();
+}
+
+function viewAdminGate(){
+  return topbarHTML('admin') +
+  '<div class="container-narrow" style="padding:60px 24px;">' +
+    '<div class="card" style="max-width:420px;margin:0 auto;">' +
+      '<div style="width:40px;height:40px;border-radius:11px;background:var(--accent-soft);color:var(--accent);display:flex;align-items:center;justify-content:center;margin-bottom:14px;">'+iconLock()+'</div>' +
+      '<div class="section-title">Ambiente interno</div>' +
+      '<p style="color:var(--ink-2);font-size:14.5px;">Área restrita ao Comitê de Ética e Integridade — triagem, classificação de risco, investigação e indicadores.</p>' +
+      '<div class="banner banner-warn" style="margin-bottom:16px;">'+iconWarn()+'<div>Isto é uma tela de demonstração, não uma autenticação real. Em produção, o acesso seria controlado por perfis e permissões individuais (seção 20 do manual). PIN de demonstração: <strong>0000</strong>.</div></div>' +
+      '<form id="ep-admin-gate">' +
+        '<div class="field"><label>PIN de demonstração</label><input type="password" name="pin" placeholder="0000" autofocus></div>' +
+        '<button type="submit" class="btn btn-primary btn-block">Entrar</button>' +
+      '</form>' +
+    '</div>' +
+  '</div>' + footerHTML();
+}
+
+function adminGateSubmit(form){
+  var fd = new FormData(form);
+  if((fd.get('pin')||'')==='0000'){ setAdminAuthed(); render(); }
+  else { toast('PIN incorreto (use 0000 nesta demonstração).'); }
+}
+
+function adminTabs(active){
+  function it(hash,label){ return '<a href="#'+hash+'" class="'+(active===hash?'active':'')+'">'+label+'</a>'; }
+  return '<div class="nav" style="margin:0 0 22px;justify-content:flex-start;">' +
+    it('admin/dashboard','Indicadores') + it('admin/casos','Casos') +
+  '</div>';
+}
+
+function computeIndicators(){
+  var cases = STATE.cases;
+  var total = cases.length;
+  var anon = cases.filter(function(c){ return c.anonymous; }).length;
+  var byGroup = {};
+  CATEGORY_GROUPS.forEach(function(g){ byGroup[g.id]=0; });
+  cases.forEach(function(c){ var f=CAT_INDEX[c.categoria]; if(f) byGroup[f.group.id]++; });
+  var byRisk = {baixo:0,medio:0,alto:0,critico:0,null:0};
+  cases.forEach(function(c){ byRisk[c.risco || 'null']++; });
+  var concluded = cases.filter(function(c){ return c.status==='concluido'; });
+  var byConclusao = {procedente:0,parcial:0,nao_procedente:0,inconclusiva:0};
+  concluded.forEach(function(c){ if(c.conclusao) byConclusao[c.conclusao]++; });
+  var triagemDurations = cases.filter(function(c){ return c.milestones.triagemEm; }).map(function(c){ return daysBetween(c.milestones.recebidoEm, c.milestones.triagemEm); });
+  var invDurations = cases.filter(function(c){ return c.milestones.investigacaoEm && c.milestones.concluidoEm; }).map(function(c){ return daysBetween(c.milestones.investigacaoEm, c.milestones.concluidoEm); });
+  function avg(arr){ if(!arr.length) return null; return Math.round((arr.reduce(function(a,b){return a+b;},0)/arr.length)*10)/10; }
+  var criticosAbertos = cases.filter(function(c){ return c.risco==='critico' && c.status!=='concluido'; }).length;
+  var medidas = cases.filter(function(c){ return (c.medidasAdotadas||'').trim().length>0; }).length;
+  return {
+    total:total, anonPct: total? Math.round(anon/total*100):0, byGroup:byGroup, byRisk:byRisk,
+    concluded:concluded.length, byConclusao:byConclusao,
+    avgTriagem: avg(triagemDurations), avgInvestigacao: avg(invDurations),
+    criticosAbertos: criticosAbertos, medidas: medidas
+  };
+}
+
+function viewAdminDashboard(){
+  var ind = computeIndicators();
+  var maxGroup = Math.max(1, Object.keys(ind.byGroup).reduce(function(m,k){ return Math.max(m, ind.byGroup[k]); },0));
+  return topbarHTML('admin') +
+  '<div class="container" style="padding:36px 24px 60px;">' +
+    adminHeader() + adminTabs('admin/dashboard') +
+    (ind.criticosAbertos>0 ? '<div class="banner banner-warn" style="margin-bottom:18px;">'+iconWarn()+'<div><strong>'+ind.criticosAbertos+' caso(s) de risco crítico em aberto.</strong> Ação imediata e escalonamento recomendados conforme a classificação de risco.</div></div>' : '') +
+    '<div class="stat-grid">' +
+      statTile('Manifestações recebidas', ind.total, '') +
+      statTile('Manifestações anônimas', ind.anonPct+'%', 'do total') +
+      statTile('Tempo médio de triagem', ind.avgTriagem!==null ? ind.avgTriagem+' dias' : '—', 'meta interna: até 5 dias úteis') +
+      statTile('Casos concluídos', ind.concluded, ind.total? Math.round(ind.concluded/ind.total*100)+'% do total' : '') +
+    '</div>' +
+    '<div class="grid-2" style="margin-top:16px;align-items:start;">' +
+      '<div class="card">' +
+        '<div class="section-title" style="font-size:16px;">Distribuição por categoria</div>' +
+        CATEGORY_GROUPS.map(function(g){
+          var n = ind.byGroup[g.id];
+          var pct = Math.round(n/maxGroup*100);
+          return '<div class="bar-row"><div class="bar-name">'+esc(g.label)+'</div><div class="bar-track"><div class="bar-fill" style="width:'+pct+'%;background:var('+g.color+');"></div></div><div class="bar-count tabular">'+n+'</div></div>';
+        }).join('') +
+      '</div>' +
+      '<div class="card">' +
+        '<div class="section-title" style="font-size:16px;">Distribuição por nível de risco</div>' +
+        RISK_ORDER.map(function(r){
+          var n = ind.byRisk[r];
+          var pct = Math.round(n/Math.max(1,ind.total)*100);
+          return '<div class="bar-row"><div class="bar-name">'+riskBadge(r)+'</div><div class="bar-track"><div class="bar-fill" style="width:'+pct+'%;background:var(--'+RISK_INFO[r].cls+');"></div></div><div class="bar-count tabular">'+n+'</div></div>';
+        }).join('') +
+        (ind.byRisk['null']>0 ? '<div class="bar-row"><div class="bar-name">'+riskBadge(null)+'</div><div class="bar-track"><div class="bar-fill" style="width:'+Math.round(ind.byRisk['null']/Math.max(1,ind.total)*100)+'%;background:var(--ink-3);"></div></div><div class="bar-count tabular">'+ind.byRisk['null']+'</div></div>' : '') +
+      '</div>' +
+    '</div>' +
+    '<div class="grid-2" style="margin-top:16px;align-items:start;">' +
+      '<div class="card">' +
+        '<div class="section-title" style="font-size:16px;">Resultado dos casos concluídos</div>' +
+        (ind.concluded===0 ? '<div class="empty">Nenhum caso concluído ainda.</div>' :
+          Object.keys(ind.byConclusao).map(function(k){
+            var n = ind.byConclusao[k];
+            var pct = Math.round(n/Math.max(1,ind.concluded)*100);
+            return '<div class="bar-row"><div class="bar-name">'+conclusaoBadge(k)+'</div><div class="bar-track"><div class="bar-fill" style="width:'+pct+'%;background:var(--'+CONCLUSAO_INFO[k].cls+');"></div></div><div class="bar-count tabular">'+n+'</div></div>';
+          }).join('')) +
+      '</div>' +
+      '<div class="card">' +
+        '<div class="section-title" style="font-size:16px;">Outros indicadores</div>' +
+        '<div class="bar-row" style="grid-template-columns:1fr auto;"><div class="bar-name">Tempo médio de investigação</div><div class="bar-count tabular">'+(ind.avgInvestigacao!==null?ind.avgInvestigacao+' dias':'—')+'</div></div>' +
+        '<div class="bar-row" style="grid-template-columns:1fr auto;"><div class="bar-name">Medidas corretivas registradas</div><div class="bar-count tabular">'+ind.medidas+'</div></div>' +
+        '<div class="bar-row" style="grid-template-columns:1fr auto;"><div class="bar-name">Casos de risco crítico em aberto</div><div class="bar-count tabular">'+ind.criticosAbertos+'</div></div>' +
+        '<div class="hr"></div>' +
+        '<div class="field-hint" style="margin-bottom:8px;font-weight:700;text-transform:uppercase;letter-spacing:.03em;">Prazos internos de referência</div>' +
+        PRAZOS.map(function(p){ return '<div class="bar-row" style="grid-template-columns:1fr auto;padding:5px 0;"><div class="bar-name" style="font-size:13px;">'+esc(p.etapa)+'</div><div style="font-size:12.5px;color:var(--ink-3);text-align:right;">'+esc(p.ref)+'</div></div>'; }).join('') +
+      '</div>' +
+    '</div>' +
+  '</div>' + footerHTML();
+}
+function statTile(label, value, sub){
+  return '<div class="stat-tile"><div class="stat-label">'+esc(label)+'</div><div class="stat-value tabular">'+value+'</div>'+(sub?'<div class="stat-sub">'+esc(sub)+'</div>':'')+'</div>';
+}
+function adminHeader(){
+  return '<div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px;margin-bottom:6px;">' +
+    '<div><div class="kicker">Comitê de Ética e Integridade</div><h1 style="font-size:26px;margin-bottom:2px;">Ambiente interno</h1></div>' +
+    '<button class="btn btn-ghost btn-sm" data-action="admin-logout">Sair</button>' +
+  '</div>';
+}
+
+function viewAdminCasos(){
+  var cases = STATE.cases.slice().sort(function(a,b){ return new Date(b.createdAt)-new Date(a.createdAt); });
+  if(adminFilters.status) cases = cases.filter(function(c){ return c.status===adminFilters.status; });
+  if(adminFilters.risco) cases = cases.filter(function(c){ return c.risco===adminFilters.risco; });
+  if(adminFilters.categoria) cases = cases.filter(function(c){ var f=CAT_INDEX[c.categoria]; return f && f.group.id===adminFilters.categoria; });
+  return topbarHTML('admin') +
+  '<div class="container" style="padding:36px 24px 60px;">' +
+    adminHeader() + adminTabs('admin/casos') +
+    '<div class="filter-row">' +
+      '<select data-filter="status"><option value="">Todos os status</option>' + STATUS_ORDER.map(function(s){ return '<option value="'+s+'"'+(adminFilters.status===s?' selected':'')+'>'+STATUS_INFO[s].label+'</option>'; }).join('') + '</select>' +
+      '<select data-filter="categoria"><option value="">Todas as categorias</option>' + CATEGORY_GROUPS.map(function(g){ return '<option value="'+g.id+'"'+(adminFilters.categoria===g.id?' selected':'')+'>'+esc(g.label)+'</option>'; }).join('') + '</select>' +
+      '<select data-filter="risco"><option value="">Todos os riscos</option>' + RISK_ORDER.map(function(r){ return '<option value="'+r+'"'+(adminFilters.risco===r?' selected':'')+'>'+RISK_INFO[r].label+'</option>'; }).join('') + '</select>' +
+    '</div>' +
+    '<div class="table-wrap"><table><thead><tr><th>Protocolo</th><th>Categoria</th><th>Recebido em</th><th>Risco</th><th>Status</th><th>Responsável</th></tr></thead><tbody>' +
+      (cases.length ? cases.map(function(c){
+        return '<tr class="row-link" data-action="open-case" data-id="'+c.id+'">' +
+          '<td class="mono">'+esc(c.protocolo)+(c.urgente?' <span class="badge badge-critical" style="margin-left:4px;">Urgente</span>':'')+'</td>' +
+          '<td>'+catBadge(c.categoria)+'</td>' +
+          '<td>'+fmtDate(c.createdAt)+'</td>' +
+          '<td>'+riskBadge(c.risco)+'</td>' +
+          '<td>'+statusBadge(c.status)+'</td>' +
+          '<td>'+(c.responsavel?esc(c.responsavel):'<span style="color:var(--ink-3);">não definido</span>')+'</td>' +
+        '</tr>';
+      }).join('') : '<tr><td colspan="6"><div class="empty">Nenhum caso encontrado para esses filtros.</div></td></tr>') +
+    '</tbody></table></div>' +
+  '</div>' + footerHTML();
+}
+
+function viewAdminCaso(id){
+  var c = caseById(id);
+  if(!c) return topbarHTML('admin') + '<div class="container" style="padding:60px 24px;"><div class="empty">Caso não encontrado.</div><p style="text-align:center;"><a href="#admin/casos">← Voltar para a lista</a></p></div>' + footerHTML();
+  var f = CAT_INDEX[c.categoria];
+  return topbarHTML('admin') +
+  '<div class="container" style="padding:36px 24px 60px;">' +
+    adminHeader() +
+    '<p style="margin:-4px 0 18px;"><a href="#admin/casos" style="font-size:13.5px;font-weight:600;">← Voltar para casos</a></p>' +
+    '<div class="card">' +
+      '<div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;">' +
+        '<div><div class="field-hint">PROTOCOLO</div><div class="proto-code" style="font-size:22px;">'+esc(c.protocolo)+'</div></div>' +
+        '<div style="display:flex;gap:8px;flex-wrap:wrap;align-items:flex-start;">'+riskBadge(c.risco)+statusBadge(c.status)+(c.urgente?'<span class="badge badge-critical">Urgente</span>':'')+'</div>' +
+      '</div>' +
+      stepperHTML(c.status) +
+    '</div>' +
+
+    '<div class="card">' +
+      '<div class="section-title" style="font-size:16px;">Dados relatados</div>' +
+      '<div class="grid-2">' +
+        '<div><div class="field-hint">CATEGORIA</div>'+catBadge(c.categoria)+'</div>' +
+        '<div><div class="field-hint">IDENTIFICAÇÃO</div>' + (c.anonymous ? '<span class="badge badge-neutral">Anônimo</span>' : '<div style="font-size:14px;">'+esc((c.denunciante&&c.denunciante.nome)||'—')+(c.denunciante&&c.denunciante.area?' · '+esc(c.denunciante.area):'')+'<br><span style="color:var(--ink-3);font-size:12.5px;">'+esc((c.denunciante&&c.denunciante.email)||'')+(c.denunciante&&c.denunciante.telefone?' · '+esc(c.denunciante.telefone):'')+'</span></div>') + '</div>' +
+        '<div><div class="field-hint">DATA OU PERÍODO</div><div style="font-size:14px;">'+esc(c.dataFato||'—')+'</div></div>' +
+        '<div><div class="field-hint">LOCAL OU ÁREA</div><div style="font-size:14px;">'+esc(c.local||'—')+'</div></div>' +
+      '</div>' +
+      '<div class="hr"></div>' +
+      '<div class="field-hint">PESSOAS ENVOLVIDAS</div><p style="font-size:14.5px;">'+nl2br(c.pessoasEnvolvidas||'—')+'</p>' +
+      '<div class="field-hint">DESCRIÇÃO DOS FATOS</div><p style="font-size:14.5px;">'+nl2br(c.descricao)+'</p>' +
+      '<div class="field-hint">TESTEMUNHAS</div><p style="font-size:14.5px;">'+nl2br(c.testemunhas||'—')+'</p>' +
+      '<div class="field-hint">EVIDÊNCIAS INDICADAS PELO DENUNCIANTE</div><p style="font-size:14.5px;">'+nl2br(c.evidenciasDisponiveis||'—')+'</p>' +
+      (c.anexosDescricao ? '<div class="field-hint">ANEXOS DESCRITOS</div><p style="font-size:14.5px;margin-bottom:0;">'+nl2br(c.anexosDescricao)+'</p>' : '') +
+    '</div>' +
+
+    '<div class="card">' +
+      '<div class="section-title" style="font-size:16px;">Triagem</div>' +
+      '<form data-action="save-triagem" data-id="'+c.id+'">' +
+        '<div class="grid-2">' +
+          '<div class="field"><label>Status</label><select name="status">' + STATUS_ORDER.filter(function(s){return s!=='concluido';}).map(function(s){ return '<option value="'+s+'"'+(c.status===s?' selected':'')+'>'+STATUS_INFO[s].label+'</option>'; }).join('') + '</select></div>' +
+          '<div class="field"><label>Responsável pela apuração</label><input type="text" name="responsavel" value="'+esc(c.responsavel)+'" placeholder="ex.: Comitê de Ética – Relator 1"></div>' +
+        '</div>' +
+        '<label class="checkline" style="margin-bottom:14px;"><input type="checkbox" name="urgente" '+(c.urgente?'checked':'')+'><span>Marcar como urgente</span></label>' +
+        '<button class="btn btn-primary btn-sm" type="submit">Salvar triagem</button>' +
+      '</form>' +
+    '</div>' +
+
+    '<div class="card">' +
+      '<div class="section-title" style="font-size:16px;">Conflito de interesse</div>' +
+      '<div class="section-hint">Verificação de eventual envolvimento de pessoas responsáveis pela análise (seção 12 do manual).</div>' +
+      '<form data-action="save-conflito" data-id="'+c.id+'">' +
+        '<label class="checkline" style="margin-bottom:14px;"><input type="checkbox" name="verificado" '+(c.conflitoInteresse.verificado?'checked':'')+'><span>Conflito de interesse verificado</span></label>' +
+        '<div class="field"><label>Observações</label><textarea name="detalhe" placeholder="Descreva a verificação realizada, se aplicável.">'+esc(c.conflitoInteresse.detalhe)+'</textarea></div>' +
+        '<button class="btn btn-primary btn-sm" type="submit">Salvar</button>' +
+      '</form>' +
+    '</div>' +
+
+    '<div class="card">' +
+      '<div class="section-title" style="font-size:16px;">Classificação de risco</div>' +
+      '<form data-action="save-risco" data-id="'+c.id+'">' +
+        '<div style="display:flex;flex-direction:column;gap:8px;margin-bottom:14px;">' +
+          RISK_ORDER.map(function(r){
+            var info = RISK_INFO[r];
+            return '<label class="choice-card" style="flex-basis:auto;'+(c.risco===r?'border-color:var(--'+info.cls+');background:color-mix(in srgb, var(--'+info.cls+') 10%, var(--surface));':'')+'">' +
+              '<input type="radio" name="risco" value="'+r+'" '+(c.risco===r?'checked':'')+'>' +
+              '<span><strong style="display:block;font-size:14px;">'+info.label+'</strong>' +
+              '<span style="font-size:12.5px;color:var(--ink-3);display:block;">'+esc(info.desc)+'</span>' +
+              '<span style="font-size:12.5px;color:var(--ink-2);display:block;margin-top:3px;"><strong>Tratamento:</strong> '+esc(info.tratamento)+'</span></span>' +
+            '</label>';
+          }).join('') +
+        '</div>' +
+        '<button class="btn btn-primary btn-sm" type="submit">Salvar classificação</button>' +
+      '</form>' +
+    '</div>' +
+
+    '<div class="card">' +
+      '<div class="section-title" style="font-size:16px;">Investigação</div>' +
+      '<form data-action="save-investigacao" data-id="'+c.id+'">' +
+        '<div class="field"><label>Evidências analisadas</label><textarea name="evidenciasAnalisadas">'+esc(c.evidenciasAnalisadas)+'</textarea></div>' +
+        '<div class="field"><label>Entrevistas / diligências realizadas</label><textarea name="diligencias">'+esc(c.diligencias)+'</textarea></div>' +
+        '<button class="btn btn-primary btn-sm" type="submit">Salvar investigação</button>' +
+      '</form>' +
+      '<div class="hr"></div>' +
+      '<div class="field-hint" style="margin-bottom:8px;font-weight:700;text-transform:uppercase;letter-spacing:.03em;">Notas internas</div>' +
+      (c.log.filter(function(l){return l.tipo==='interno';}).length ?
+        c.log.filter(function(l){return l.tipo==='interno';}).map(function(l){ return '<div class="msg"><div class="msg-meta">'+esc(l.autor)+' · '+fmtDateTime(l.ts)+'</div><div class="msg-text">'+nl2br(l.texto)+'</div></div>'; }).join('')
+        : '<div class="empty" style="padding:10px 0;">Nenhuma nota interna registrada.</div>') +
+      '<form data-action="add-note" data-id="'+c.id+'" style="margin-top:10px;">' +
+        '<div class="field"><textarea name="nota" placeholder="Adicionar nota interna (visível só para a equipe)…">'+esc(internalNoteDraft)+'</textarea></div>' +
+        '<button class="btn btn-sm" type="submit">Adicionar nota</button>' +
+      '</form>' +
+    '</div>' +
+
+    '<div class="card">' +
+      '<div class="section-title" style="font-size:16px;">Conclusão e encerramento</div>' +
+      '<form data-action="save-conclusao" data-id="'+c.id+'">' +
+        '<div class="field"><label>Resultado da investigação</label><select name="conclusao"><option value="">Em aberto</option>' +
+          Object.keys(CONCLUSAO_INFO).map(function(k){ return '<option value="'+k+'"'+(c.conclusao===k?' selected':'')+'>'+CONCLUSAO_INFO[k].label+'</option>'; }).join('') +
+        '</select></div>' +
+        '<div class="field"><label>Fundamentação</label><textarea name="fundamentacao">'+esc(c.fundamentacao)+'</textarea></div>' +
+        '<div class="field"><label>Medidas adotadas</label><textarea name="medidasAdotadas">'+esc(c.medidasAdotadas)+'</textarea></div>' +
+        '<button class="btn btn-primary btn-sm" type="submit">Salvar conclusão</button>' +
+      '</form>' +
+      (c.status!=='concluido' ?
+        '<div style="margin-top:14px;"><form data-action="encerrar-caso" data-id="'+c.id+'">' +
+          '<button class="btn btn-danger btn-sm" type="submit" '+(!c.conclusao?'disabled':'')+'>Encerrar caso</button>' +
+          (!c.conclusao ? '<div class="readonly-note">Defina um resultado da investigação antes de encerrar.</div>' : '') +
+        '</form></div>' :
+        '<div class="banner banner-good" style="margin-top:14px;">'+iconShield()+'<div>Caso encerrado em '+fmtDate(c.milestones.concluidoEm)+'.</div></div>') +
+    '</div>' +
+
+    '<div class="card">' +
+      '<div class="section-title" style="font-size:16px;">Comunicação com o denunciante</div>' +
+      '<div class="section-hint">Mensagens abaixo (exceto notas internas) ficam visíveis para quem consultar o protocolo.</div>' +
+      (c.log.filter(function(l){return l.tipo!=='interno';}).map(function(l){
+        var cls = l.tipo==='mensagem_equipe' ? 'equipe' : (l.tipo==='mensagem_denunciante' ? 'denunciante' : '');
+        var who = l.tipo==='mensagem_equipe' ? 'Equipe do canal' : (l.tipo==='mensagem_denunciante' ? 'Denunciante' : 'Sistema');
+        return '<div class="msg '+cls+'"><div class="msg-meta">'+who+' · '+fmtDateTime(l.ts)+'</div><div class="msg-text">'+nl2br(l.texto)+'</div></div>';
+      }).join('')) +
+      '<form data-action="send-message" data-id="'+c.id+'" style="margin-top:10px;">' +
+        '<div class="field"><textarea name="mensagem" placeholder="Escreva uma mensagem visível ao denunciante…">'+esc(equipeMsgDraft)+'</textarea></div>' +
+        '<button class="btn btn-sm" type="submit">Enviar mensagem ao denunciante</button>' +
+      '</form>' +
+    '</div>' +
+  '</div>' + footerHTML();
+}
+
+/* ====================== admin actions ====================== */
+function saveTriagem(form, id){
+  var fd = new FormData(form);
+  commit(function(state){
+    var c = caseById(id); if(!c) return;
+    var newStatus = fd.get('status');
+    var urgente = !!fd.get('urgente');
+    if(newStatus !== c.status){
+      if(newStatus==='triagem' && !c.milestones.triagemEm) c.milestones.triagemEm = nowISO();
+      if(newStatus==='investigacao' && !c.milestones.investigacaoEm) c.milestones.investigacaoEm = nowISO();
+      c.status = newStatus;
+      c.log.push({ts:nowISO(), tipo:'sistema', autor:'Sistema', texto:'Status atualizado para "'+STATUS_INFO[newStatus].label+'".'});
+    }
+    c.urgente = urgente;
+    c.responsavel = fd.get('responsavel') || '';
+  }, { stash:{hash:'#admin/caso/'+id} });
+}
+function saveConflito(form, id){
+  var fd = new FormData(form);
+  commit(function(state){
+    var c = caseById(id); if(!c) return;
+    c.conflitoInteresse = {verificado: !!fd.get('verificado'), detalhe: fd.get('detalhe')||''};
+  }, { stash:{hash:'#admin/caso/'+id} });
+}
+function saveRisco(form, id){
+  var fd = new FormData(form);
+  var risco = fd.get('risco');
+  if(!risco){ toast('Selecione um nível de risco.'); return; }
+  commit(function(state){
+    var c = caseById(id); if(!c) return;
+    c.risco = risco;
+    c.log.push({ts:nowISO(), tipo:'interno', autor:'Sistema', texto:'Classificação de risco definida como "'+RISK_INFO[risco].label+'".'});
+  }, { stash:{hash:'#admin/caso/'+id} });
+}
+function saveInvestigacao(form, id){
+  var fd = new FormData(form);
+  commit(function(state){
+    var c = caseById(id); if(!c) return;
+    c.evidenciasAnalisadas = fd.get('evidenciasAnalisadas')||'';
+    c.diligencias = fd.get('diligencias')||'';
+  }, { stash:{hash:'#admin/caso/'+id} });
+}
+function addNote(form, id){
+  var fd = new FormData(form);
+  var nota = (fd.get('nota')||'').trim();
+  if(!nota) return;
+  internalNoteDraft = '';
+  commit(function(state){
+    var c = caseById(id); if(!c) return;
+    c.log.push({ts:nowISO(), tipo:'interno', autor:'Equipe', texto:nota});
+  }, { stash:{hash:'#admin/caso/'+id} });
+}
+function saveConclusao(form, id){
+  var fd = new FormData(form);
+  commit(function(state){
+    var c = caseById(id); if(!c) return;
+    c.conclusao = fd.get('conclusao') || null;
+    c.fundamentacao = fd.get('fundamentacao')||'';
+    c.medidasAdotadas = fd.get('medidasAdotadas')||'';
+  }, { stash:{hash:'#admin/caso/'+id} });
+}
+function encerrarCaso(id){
+  commit(function(state){
+    var c = caseById(id); if(!c || !c.conclusao) return;
+    c.status = 'concluido';
+    c.milestones.concluidoEm = nowISO();
+    c.log.push({ts:nowISO(), tipo:'sistema', autor:'Sistema', texto:'Caso encerrado. Resultado: '+CONCLUSAO_INFO[c.conclusao].label+'.'});
+  }, { stash:{hash:'#admin/caso/'+id} });
+}
+function sendMessage(form, id){
+  var fd = new FormData(form);
+  var texto = (fd.get('mensagem')||'').trim();
+  if(!texto) return;
+  equipeMsgDraft = '';
+  commit(function(state){
+    var c = caseById(id); if(!c) return;
+    c.log.push({ts:nowISO(), tipo:'mensagem_equipe', autor:'Equipe', texto:texto});
+  }, { stash:{hash:'#admin/caso/'+id} });
+}
+
+/* ====================== render dispatcher ====================== */
+function render(){
+  var parts = route();
+  var html;
+  if(parts[0]==='novo') html = viewNovo();
+  else if(parts[0]==='protocolo') html = viewProtocolo();
+  else if(parts[0]==='admin') html = viewAdmin(parts);
+  else html = viewHome();
+  document.getElementById('app').innerHTML = html;
+  window.scrollTo({top:0});
+  justSubmitted = false;
+}
+
+/* ====================== event delegation ====================== */
+document.addEventListener('submit', function(e){
+  var form = e.target;
+  if(form.id==='ep-form'){ e.preventDefault(); submitForm(form); }
+  else if(form.id==='ep-lookup'){ e.preventDefault(); lookupSubmit(form); }
+  else if(form.id==='ep-reply'){ e.preventDefault(); replySubmit(form, lookupResultId); }
+  else if(form.id==='ep-admin-gate'){ e.preventDefault(); adminGateSubmit(form); }
+  else if(form.dataset && form.dataset.action){
+    e.preventDefault();
+    var id = form.dataset.id;
+    var action = form.dataset.action;
+    if(action==='save-triagem') saveTriagem(form,id);
+    else if(action==='save-conflito') saveConflito(form,id);
+    else if(action==='save-risco') saveRisco(form,id);
+    else if(action==='save-investigacao') saveInvestigacao(form,id);
+    else if(action==='add-note') addNote(form,id);
+    else if(action==='save-conclusao') saveConclusao(form,id);
+    else if(action==='encerrar-caso') encerrarCaso(id);
+    else if(action==='send-message') sendMessage(form,id);
+  }
+});
+
+document.addEventListener('click', function(e){
+  var t = e.target.closest('[data-action]');
+  if(!t) return;
+  var action = t.dataset.action;
+  if(action==='open-case'){ location.hash = '#admin/caso/'+t.dataset.id; }
+  else if(action==='admin-logout'){ try{ sessionStorage.removeItem('ep_admin_authed'); }catch(err){} location.hash = '#home'; render(); }
+});
+
+document.addEventListener('change', function(e){
+  var t = e.target;
+  if(t.matches('[data-filter]')){
+    adminFilters[t.dataset.filter] = t.value;
+    render();
+  } else if(t.name==='anon' && t.closest('#ep-form')){
+    formDraft.anonymous = t.value==='1';
+    render();
+  }
+});
+
+/* ====================== boot ====================== */
+function boot(){
+  var resumed = false;
+  try{
+    var raw = sessionStorage.getItem('ep_resume');
+    if(raw){
+      var r = JSON.parse(raw);
+      sessionStorage.removeItem('ep_resume');
+      if(r.hash) location.hash = r.hash;
+      if(r.lookup) lookupDraft = r.lookup;
+      if(r.resultId) lookupResultId = r.resultId;
+      if(r.justSubmitted) justSubmitted = true;
+      resumed = true;
+      render();
+      if(typeof r.scroll==='number') setTimeout(function(){ window.scrollTo({top:r.scroll}); }, 30);
+    }
+  }catch(e){}
+  if(!resumed) render();
+}
+boot();
+
+})();
+</script>
+</body>
+</html>
