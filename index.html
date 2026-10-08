@@ -2016,15 +2016,39 @@ async function adminGateSubmit(form){
     }
 
     adminProfile =
-      perfil.data;
+  perfil.data;
 
-    adminAuthReady = true;
+/*
+ * Carrega todos os administradores ativos
+ * para seleção de responsável.
+ */
+var perfis =
+  await supabaseClient
+    .from('perfis_admin')
+    .select('id,nome,cargo,ativo')
+    .eq('ativo', true)
+    .order('nome', { ascending:true });
 
-    toast(
-      'Acesso autorizado.'
-    );
+if(perfis.error){
+  throw perfis.error;
+}
 
-    render();
+adminProfiles =
+  perfis.data || [];
+
+/*
+ * Agora carregamos as denúncias reais
+ * antes de liberar o painel.
+ */
+await carregarCasosAdmin();
+
+adminAuthReady = true;
+
+toast(
+  'Acesso autorizado.'
+);
+
+render();
 
   } catch(error){
 
@@ -2097,8 +2121,31 @@ function computeIndicators(){
   var concluded = cases.filter(function(c){ return c.status==='concluido'; });
   var byConclusao = {procedente:0,parcial:0,nao_procedente:0,inconclusiva:0};
   concluded.forEach(function(c){ if(c.conclusao) byConclusao[c.conclusao]++; });
-  var triagemDurations = cases.filter(function(c){ return c.milestones.triagemEm; }).map(function(c){ return daysBetween(c.milestones.recebidoEm, c.milestones.triagemEm); });
-  var invDurations = cases.filter(function(c){ return c.milestones.investigacaoEm && c.milestones.concluidoEm; }).map(function(c){ return daysBetween(c.milestones.investigacaoEm, c.milestones.concluidoEm); });
+  var triagemDurations = cases
+  .filter(function(c){
+    return c.milestones &&
+           c.milestones.triagemEm &&
+           c.milestones.recebidoEm;
+  })
+  .map(function(c){
+    return daysBetween(
+      c.milestones.recebidoEm,
+      c.milestones.triagemEm
+    );
+  });
+
+var invDurations = cases
+  .filter(function(c){
+    return c.milestones &&
+           c.milestones.investigacaoEm &&
+           c.milestones.concluidoEm;
+  })
+  .map(function(c){
+    return daysBetween(
+      c.milestones.investigacaoEm,
+      c.milestones.concluidoEm
+    );
+  });
   function avg(arr){ if(!arr.length) return null; return Math.round((arr.reduce(function(a,b){return a+b;},0)/arr.length)*10)/10; }
   var criticosAbertos = cases.filter(function(c){ return c.risco==='critico' && c.status!=='concluido'; }).length;
   var medidas = cases.filter(function(c){ return (c.medidasAdotadas||'').trim().length>0; }).length;
