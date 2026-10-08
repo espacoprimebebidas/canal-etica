@@ -1454,6 +1454,7 @@ function replySubmit(form, caseId){
 var adminFilters = { status:'', categoria:'', risco:'' };
 var internalNoteDraft = '';
 var equipeMsgDraft = '';
+var adminProfiles = [];
 
 function isAdminAuthed(){
   return !!(
@@ -1601,8 +1602,15 @@ function mapearDenunciaParaCaso(d){
         detalhe: ''
       },
 
-    responsavel:
+    responsavelId:
       d.responsavel_id || '',
+    
+    responsavel:
+      (
+        adminProfiles.find(function(p){
+          return p.id === d.responsavel_id;
+        }) || {}
+      ).nome || '',
 
     milestones:
       {
@@ -1657,6 +1665,28 @@ function statusInterfaceParaBanco(status){
   return statusMap[status] || status;
 }
 
+async function registrarHistorico(denunciaId, acao, detalhes){
+
+  if(!adminSession || !adminSession.user){
+    throw new Error('Administrador não autenticado.');
+  }
+
+  var resultado =
+    await supabaseClient
+      .from('denuncia_historico')
+      .insert({
+        denuncia_id: denunciaId,
+        usuario_id: adminSession.user.id,
+        acao: acao,
+        detalhes: detalhes
+      });
+
+  if(resultado.error){
+    throw resultado.error;
+  }
+
+}
+
 async function carregarCasosAdmin(){
 
   try{
@@ -1678,8 +1708,54 @@ async function carregarCasosAdmin(){
     var denuncias =
       resultado.data || [];
 
+    var historicoResultado =
+      await supabaseClient
+        .from('denuncia_historico')
+        .select('id,denuncia_id,usuario_id,acao,detalhes,criado_em')
+        .order('criado_em', { ascending:true });
+    
+    if(historicoResultado.error){
+      throw historicoResultado.error;
+    }
+    
+    var historicos =
+      historicoResultado.data || [];
+
     STATE.cases =
-      denuncias.map(mapearDenunciaParaCaso);
+  denuncias.map(function(d){
+
+    var caso =
+      mapearDenunciaParaCaso(d);
+
+    var historicoCaso =
+      historicos.filter(function(h){
+        return h.denuncia_id === d.id;
+      });
+
+    caso.log =
+      historicoCaso.map(function(h){
+
+        var perfil =
+          adminProfiles.find(function(p){
+            return p.id === h.usuario_id;
+          });
+
+        return {
+          ts: h.criado_em,
+          tipo: 'interno',
+          autor: perfil
+            ? perfil.nome
+            : 'Administrador',
+          texto:
+            h.acao +
+            (h.detalhes ? ': ' + h.detalhes : '')
+        };
+
+      });
+
+    return caso;
+
+  });
 
     console.log(
       'Denúncias carregadas do Supabase:',
@@ -1747,6 +1823,19 @@ async function carregarSessaoAdmin(){
       } else {
 
         adminProfile = perfil.data;
+
+        var perfis =
+          await supabaseClient
+            .from('perfis_admin')
+            .select('id,nome,cargo,ativo')
+            .eq('ativo', true)
+            .order('nome', { ascending:true });
+        
+        if(perfis.error){
+          throw perfis.error;
+        }
+        
+        adminProfiles = perfis.data || [];
 
         /*
          * Usuário autenticado e autorizado.
@@ -2304,12 +2393,24 @@ function viewAdminCaso(id){
 
           '<div class="field">' +
             '<label>Responsável pela apuração</label>' +
-
-            '<input type="text" ' +
-              'name="responsavel" ' +
-              'value="' + esc(c.responsavel || '') + '"' +
-              'placeholder="ex.: Comitê de Ética – Relator 1">' +
-
+          
+            '<select name="responsavel">' +
+          
+              '<option value="">Não definido</option>' +
+          
+              adminProfiles.map(function(p){
+          
+                return '<option value="' + p.id + '"' +
+                  (c.responsavelId === p.id ? ' selected' : '') +
+                  '>' +
+                    esc(p.nome) +
+                    (p.cargo ? ' · ' + esc(p.cargo) : '') +
+                '</option>';
+          
+              }).join('') +
+          
+            '</select>' +
+          
           '</div>' +
 
         '</div>' +
