@@ -2057,34 +2057,21 @@ function statTile(label, value, sub){
 }
 
 function adminHeader(){
-
-return '<div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px;margin-bottom:6px;">' +
-
-  '<div>' +
-
-    '<div class="kicker">Comitê de Ética e Integridade</div>' +
-
-    '<h1 style="font-size:26px;margin-bottom:2px;">Ambiente interno</h1>' +
-
-    (
-      adminProfile
-        ? '<div style="font-size:13px;color:var(--ink-3);margin-top:4px;">' +
-            esc(adminProfile.nome || '') +
-            (
-              adminProfile.cargo
-                ? ' · ' + esc(adminProfile.cargo)
-                : ''
-            ) +
-          '</div>'
-        : ''
-    ) +
-
-  '</div>' +
-
-  '<button class="btn btn-ghost btn-sm" data-action="admin-logout">Sair</button>' +
-
-'</div>';
-
+  return '<div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px;margin-bottom:6px;">' +
+    '<div>' +
+      '<div class="kicker">Comitê de Ética e Integridade</div>' +
+      '<h1 style="font-size:26px;margin-bottom:2px;">Ambiente interno</h1>' +
+      (
+        adminProfile
+          ? '<div style="font-size:13px;color:var(--ink-3);margin-top:4px;">' +
+              esc(adminProfile.nome || '') +
+              (adminProfile.cargo ? ' · ' + esc(adminProfile.cargo) : '') +
+            '</div>'
+          : ''
+      ) +
+    '</div>' +
+    '<button class="btn btn-ghost btn-sm" data-action="admin-logout">Sair</button>' +
+  '</div>';
 }
 
 function viewAdminCasos(){
