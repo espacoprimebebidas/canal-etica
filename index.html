@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <title>Canal de Ética Espaço Prime</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -459,7 +460,6 @@ function caseById(id){ return STATE.cases.find(function(c){ return c.id===id; })
 var HEAD_HTML = `<head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"><` + `/script>
 <title>Canal de Ética Espaço Prime</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1837,22 +1837,36 @@ function viewAdminDashboard(){
 function statTile(label, value, sub){
   return '<div class="stat-tile"><div class="stat-label">'+esc(label)+'</div><div class="stat-value tabular">'+value+'</div>'+(sub?'<div class="stat-sub">'+esc(sub)+'</div>':'')+'</div>';
 }
+
 function adminHeader(){
-  return '<div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px;margin-bottom:6px;">' +
-    ''<div>' +
-  '<div class="kicker">Comitê de Ética e Integridade</div>' +
-  '<h1 style="font-size:26px;margin-bottom:2px;">Ambiente interno</h1>' +
-  (
-    adminProfile
-      ? '<div style="font-size:13px;color:var(--ink-3);margin-top:4px;">' +
-          esc(adminProfile.nome || '') +
-          (adminProfile.cargo ? ' · ' + esc(adminProfile.cargo) : '') +
-        '</div>'
-      : ''
-  ) +
-'</div>' +' +
-    '<button class="btn btn-ghost btn-sm" data-action="admin-logout">Sair</button>' +
-  '</div>';
+
+return '<div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px;margin-bottom:6px;">' +
+
+  '<div>' +
+
+    '<div class="kicker">Comitê de Ética e Integridade</div>' +
+
+    '<h1 style="font-size:26px;margin-bottom:2px;">Ambiente interno</h1>' +
+
+    (
+      adminProfile
+        ? '<div style="font-size:13px;color:var(--ink-3);margin-top:4px;">' +
+            esc(adminProfile.nome || '') +
+            (
+              adminProfile.cargo
+                ? ' · ' + esc(adminProfile.cargo)
+                : ''
+            ) +
+          '</div>'
+        : ''
+    ) +
+
+  '</div>' +
+
+  '<button class="btn btn-ghost btn-sm" data-action="admin-logout">Sair</button>' +
+
+'</div>';
+
 }
 
 function viewAdminCasos(){
@@ -2216,8 +2230,6 @@ async function boot(){
 
   }
 }
-
-boot();
 boot();
 
 })();
