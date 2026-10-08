@@ -2117,126 +2117,516 @@ function viewAdminCasos(){
 
 function viewAdminCaso(id){
   var c = caseById(id);
-  if(!c) return topbarHTML('admin') + '<div class="container" style="padding:60px 24px;"><div class="empty">Caso não encontrado.</div><p style="text-align:center;"><a href="#admin/casos">← Voltar para a lista</a></p></div>' + footerHTML();
-  var f = CAT_INDEX[c.categoria];
+
+  if(!c){
+    return topbarHTML('admin') +
+      '<div class="container" style="padding:60px 24px;">' +
+        '<div class="empty">Caso não encontrado.</div>' +
+        '<p style="text-align:center;"><a href="#admin/casos">← Voltar para a lista</a></p>' +
+      '</div>' +
+      footerHTML();
+  }
+
   return topbarHTML('admin') +
   '<div class="container" style="padding:36px 24px 60px;">' +
+
     adminHeader() +
-    '<p style="margin:-4px 0 18px;"><a href="#admin/casos" style="font-size:13.5px;font-weight:600;">← Voltar para casos</a></p>' +
+
+    '<p style="margin:-4px 0 18px;">' +
+      '<a href="#admin/casos" style="font-size:13.5px;font-weight:600;">← Voltar para casos</a>' +
+    '</p>' +
+
     '<div class="card">' +
+
       '<div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;">' +
-        '<div><div class="field-hint">PROTOCOLO</div><div class="proto-code" style="font-size:22px;">'+esc(c.protocolo)+'</div></div>' +
-        '<div style="display:flex;gap:8px;flex-wrap:wrap;align-items:flex-start;">'+riskBadge(c.risco)+statusBadge(c.status)+(c.urgente?'<span class="badge badge-critical">Urgente</span>':'')+'</div>' +
+
+        '<div>' +
+          '<div class="field-hint">PROTOCOLO</div>' +
+          '<div class="proto-code" style="font-size:22px;">' +
+            esc(c.protocolo) +
+          '</div>' +
+        '</div>' +
+
+        '<div style="display:flex;gap:8px;flex-wrap:wrap;align-items:flex-start;">' +
+          riskBadge(c.risco) +
+          statusBadge(c.status) +
+          (c.urgente ? '<span class="badge badge-critical">Urgente</span>' : '') +
+        '</div>' +
+
       '</div>' +
+
       stepperHTML(c.status) +
+
     '</div>' +
 
+
     '<div class="card">' +
+
       '<div class="section-title" style="font-size:16px;">Dados relatados</div>' +
+
       '<div class="grid-2">' +
-        '<div><div class="field-hint">CATEGORIA</div>'+catBadge(c.categoria)+'</div>' +
-        '<div><div class="field-hint">IDENTIFICAÇÃO</div>' + (c.anonymous ? '<span class="badge badge-neutral">Anônimo</span>' : '<div style="font-size:14px;">'+esc((c.denunciante&&c.denunciante.nome)||'—')+(c.denunciante&&c.denunciante.area?' · '+esc(c.denunciante.area):'')+'<br><span style="color:var(--ink-3);font-size:12.5px;">'+esc((c.denunciante&&c.denunciante.email)||'')+(c.denunciante&&c.denunciante.telefone?' · '+esc(c.denunciante.telefone):'')+'</span></div>') + '</div>' +
-        '<div><div class="field-hint">DATA OU PERÍODO</div><div style="font-size:14px;">'+esc(c.dataFato||'—')+'</div></div>' +
-        '<div><div class="field-hint">LOCAL OU ÁREA</div><div style="font-size:14px;">'+esc(c.local||'—')+'</div></div>' +
+
+        '<div>' +
+          '<div class="field-hint">CATEGORIA</div>' +
+          catBadge(c.categoria) +
+        '</div>' +
+
+        '<div>' +
+          '<div class="field-hint">IDENTIFICAÇÃO</div>' +
+
+          (
+            c.anonymous
+              ? '<span class="badge badge-neutral">Anônimo</span>'
+              :
+                '<div style="font-size:14px;">' +
+                  esc((c.denunciante && c.denunciante.nome) || '—') +
+
+                  (
+                    c.denunciante && c.denunciante.area
+                      ? ' · ' + esc(c.denunciante.area)
+                      : ''
+                  ) +
+
+                  '<br>' +
+
+                  '<span style="color:var(--ink-3);font-size:12.5px;">' +
+
+                    esc(
+                      (c.denunciante && c.denunciante.email) || ''
+                    ) +
+
+                    (
+                      c.denunciante && c.denunciante.telefone
+                        ? ' · ' + esc(c.denunciante.telefone)
+                        : ''
+                    ) +
+
+                  '</span>' +
+
+                '</div>'
+          ) +
+
+        '</div>' +
+
+        '<div>' +
+          '<div class="field-hint">DATA OU PERÍODO</div>' +
+          '<div style="font-size:14px;">' +
+            esc(c.dataFato || '—') +
+          '</div>' +
+        '</div>' +
+
+        '<div>' +
+          '<div class="field-hint">LOCAL OU ÁREA</div>' +
+          '<div style="font-size:14px;">' +
+            esc(c.local || '—') +
+          '</div>' +
+        '</div>' +
+
       '</div>' +
+
       '<div class="hr"></div>' +
-      '<div class="field-hint">PESSOAS ENVOLVIDAS</div><p style="font-size:14.5px;">'+nl2br(c.pessoasEnvolvidas||'—')+'</p>' +
-      '<div class="field-hint">DESCRIÇÃO DOS FATOS</div><p style="font-size:14.5px;">'+nl2br(c.descricao)+'</p>' +
-      '<div class="field-hint">TESTEMUNHAS</div><p style="font-size:14.5px;">'+nl2br(c.testemunhas||'—')+'</p>' +
-      '<div class="field-hint">EVIDÊNCIAS INDICADAS PELO DENUNCIANTE</div><p style="font-size:14.5px;">'+nl2br(c.evidenciasDisponiveis||'—')+'</p>' +
-      (c.anexosDescricao ? '<div class="field-hint">ANEXOS DESCRITOS</div><p style="font-size:14.5px;margin-bottom:0;">'+nl2br(c.anexosDescricao)+'</p>' : '') +
+
+      '<div class="field-hint">PESSOAS ENVOLVIDAS</div>' +
+      '<p style="font-size:14.5px;">' +
+        nl2br(c.pessoasEnvolvidas || '—') +
+      '</p>' +
+
+      '<div class="field-hint">DESCRIÇÃO DOS FATOS</div>' +
+      '<p style="font-size:14.5px;">' +
+        nl2br(c.descricao || '—') +
+      '</p>' +
+
+      '<div class="field-hint">TESTEMUNHAS</div>' +
+      '<p style="font-size:14.5px;">' +
+        nl2br(c.testemunhas || '—') +
+      '</p>' +
+
+      '<div class="field-hint">EVIDÊNCIAS INDICADAS PELO DENUNCIANTE</div>' +
+      '<p style="font-size:14.5px;">' +
+        nl2br(c.evidenciasDisponiveis || '—') +
+      '</p>' +
+
+      (
+        c.anexosDescricao
+          ?
+            '<div class="field-hint">ANEXOS DESCRITOS</div>' +
+            '<p style="font-size:14.5px;margin-bottom:0;">' +
+              nl2br(c.anexosDescricao) +
+            '</p>'
+          :
+            ''
+      ) +
+
     '</div>' +
 
+
     '<div class="card">' +
+
       '<div class="section-title" style="font-size:16px;">Triagem</div>' +
-      '<form data-action="save-triagem" data-id="'+c.id+'">' +
+
+      '<form data-action="save-triagem" data-id="' + c.id + '">' +
+
         '<div class="grid-2">' +
-          '<div class="field"><label>Status</label><select name="status">' + STATUS_ORDER.filter(function(s){return s!=='concluido';}).map(function(s){ return '<option value="'+s+'"'+(c.status===s?' selected':'')+'>'+STATUS_INFO[s].label+'</option>'; }).join('') + '</select></div>' +
-          '<div class="field"><label>Responsável pela apuração</label><input type="text" name="responsavel" value="'+esc(c.responsavel)+'" placeholder="ex.: Comitê de Ética – Relator 1"></div>' +
+
+          '<div class="field">' +
+            '<label>Status</label>' +
+
+            '<select name="status">' +
+
+              STATUS_ORDER
+                .filter(function(s){
+                  return s !== 'concluido';
+                })
+                .map(function(s){
+
+                  return '<option value="' + s + '"' +
+                    (c.status === s ? ' selected' : '') +
+                    '>' +
+                    STATUS_INFO[s].label +
+                    '</option>';
+
+                })
+                .join('') +
+
+            '</select>' +
+
+          '</div>' +
+
+          '<div class="field">' +
+            '<label>Responsável pela apuração</label>' +
+
+            '<input type="text" ' +
+              'name="responsavel" ' +
+              'value="' + esc(c.responsavel || '') + '"' +
+              'placeholder="ex.: Comitê de Ética – Relator 1">' +
+
+          '</div>' +
+
         '</div>' +
-        '<label class="checkline" style="margin-bottom:14px;"><input type="checkbox" name="urgente" '+(c.urgente?'checked':'')+'><span>Marcar como urgente</span></label>' +
-        '<button class="btn btn-primary btn-sm" type="submit">Salvar triagem</button>' +
+
+        '<label class="checkline" style="margin-bottom:14px;">' +
+          '<input type="checkbox" name="urgente" ' +
+            (c.urgente ? 'checked' : '') +
+          '>' +
+          '<span>Marcar como urgente</span>' +
+        '</label>' +
+
+        '<button class="btn btn-primary btn-sm" type="submit">' +
+          'Salvar triagem' +
+        '</button>' +
+
       '</form>' +
+
     '</div>' +
 
-    '<div class="card">' +
-      '<div class="section-title" style="font-size:16px;">Conflito de interesse</div>' +
-      '<div class="section-hint">Verificação de eventual envolvimento de pessoas responsáveis pela análise (seção 12 do manual).</div>' +
-      '<form data-action="save-conflito" data-id="'+c.id+'">' +
-        '<label class="checkline" style="margin-bottom:14px;"><input type="checkbox" name="verificado" '+(c.conflitoInteresse.verificado?'checked':'')+'><span>Conflito de interesse verificado</span></label>' +
-        '<div class="field"><label>Observações</label><textarea name="detalhe" placeholder="Descreva a verificação realizada, se aplicável.">'+esc(c.conflitoInteresse.detalhe)+'</textarea></div>' +
-        '<button class="btn btn-primary btn-sm" type="submit">Salvar</button>' +
-      '</form>' +
-    '</div>' +
 
     '<div class="card">' +
+
       '<div class="section-title" style="font-size:16px;">Classificação de risco</div>' +
-      '<form data-action="save-risco" data-id="'+c.id+'">' +
+
+      '<form data-action="save-risco" data-id="' + c.id + '">' +
+
         '<div style="display:flex;flex-direction:column;gap:8px;margin-bottom:14px;">' +
+
           RISK_ORDER.map(function(r){
+
             var info = RISK_INFO[r];
-            return '<label class="choice-card" style="flex-basis:auto;'+(c.risco===r?'border-color:var(--'+info.cls+');background:color-mix(in srgb, var(--'+info.cls+') 10%, var(--surface));':'')+'">' +
-              '<input type="radio" name="risco" value="'+r+'" '+(c.risco===r?'checked':'')+'>' +
-              '<span><strong style="display:block;font-size:14px;">'+info.label+'</strong>' +
-              '<span style="font-size:12.5px;color:var(--ink-3);display:block;">'+esc(info.desc)+'</span>' +
-              '<span style="font-size:12.5px;color:var(--ink-2);display:block;margin-top:3px;"><strong>Tratamento:</strong> '+esc(info.tratamento)+'</span></span>' +
+
+            return '<label class="choice-card" style="flex-basis:auto;' +
+
+              (
+                c.risco === r
+                  ? 'border-color:var(--' + info.cls + ');background:color-mix(in srgb, var(--' + info.cls + ') 10%, var(--surface));'
+                  : ''
+              ) +
+
+              '">' +
+
+              '<input type="radio" name="risco" value="' + r + '"' +
+                (c.risco === r ? ' checked' : '') +
+              '>' +
+
+              '<span>' +
+
+                '<strong style="display:block;font-size:14px;">' +
+                  info.label +
+                '</strong>' +
+
+                '<span style="font-size:12.5px;color:var(--ink-3);display:block;">' +
+                  esc(info.desc) +
+                '</span>' +
+
+                '<span style="font-size:12.5px;color:var(--ink-2);display:block;margin-top:3px;">' +
+                  '<strong>Tratamento:</strong> ' +
+                  esc(info.tratamento) +
+                '</span>' +
+
+              '</span>' +
+
             '</label>';
+
           }).join('') +
+
         '</div>' +
-        '<button class="btn btn-primary btn-sm" type="submit">Salvar classificação</button>' +
+
+        '<button class="btn btn-primary btn-sm" type="submit">' +
+          'Salvar classificação' +
+        '</button>' +
+
       '</form>' +
+
     '</div>' +
 
+
     '<div class="card">' +
+
       '<div class="section-title" style="font-size:16px;">Investigação</div>' +
-      '<form data-action="save-investigacao" data-id="'+c.id+'">' +
-        '<div class="field"><label>Evidências analisadas</label><textarea name="evidenciasAnalisadas">'+esc(c.evidenciasAnalisadas)+'</textarea></div>' +
-        '<div class="field"><label>Entrevistas / diligências realizadas</label><textarea name="diligencias">'+esc(c.diligencias)+'</textarea></div>' +
-        '<button class="btn btn-primary btn-sm" type="submit">Salvar investigação</button>' +
+
+      '<form data-action="save-investigacao" data-id="' + c.id + '">' +
+
+        '<div class="field">' +
+          '<label>Evidências analisadas</label>' +
+          '<textarea name="evidenciasAnalisadas">' +
+            esc(c.evidenciasAnalisadas || '') +
+          '</textarea>' +
+        '</div>' +
+
+        '<div class="field">' +
+          '<label>Entrevistas / diligências realizadas</label>' +
+          '<textarea name="diligencias">' +
+            esc(c.diligencias || '') +
+          '</textarea>' +
+        '</div>' +
+
+        '<button class="btn btn-primary btn-sm" type="submit">' +
+          'Salvar investigação' +
+        '</button>' +
+
       '</form>' +
+
       '<div class="hr"></div>' +
-      '<div class="field-hint" style="margin-bottom:8px;font-weight:700;text-transform:uppercase;letter-spacing:.03em;">Notas internas</div>' +
-      (c.log.filter(function(l){return l.tipo==='interno';}).length ?
-        c.log.filter(function(l){return l.tipo==='interno';}).map(function(l){ return '<div class="msg"><div class="msg-meta">'+esc(l.autor)+' · '+fmtDateTime(l.ts)+'</div><div class="msg-text">'+nl2br(l.texto)+'</div></div>'; }).join('')
-        : '<div class="empty" style="padding:10px 0;">Nenhuma nota interna registrada.</div>') +
-      '<form data-action="add-note" data-id="'+c.id+'" style="margin-top:10px;">' +
-        '<div class="field"><textarea name="nota" placeholder="Adicionar nota interna (visível só para a equipe)…">'+esc(internalNoteDraft)+'</textarea></div>' +
-        '<button class="btn btn-sm" type="submit">Adicionar nota</button>' +
+
+      '<div class="field-hint" style="margin-bottom:8px;font-weight:700;text-transform:uppercase;letter-spacing:.03em;">' +
+        'Notas internas' +
+      '</div>' +
+
+      (
+        c.log && c.log.filter(function(l){
+          return l.tipo === 'interno';
+        }).length
+
+        ?
+
+        c.log
+          .filter(function(l){
+            return l.tipo === 'interno';
+          })
+          .map(function(l){
+
+            return '<div class="msg">' +
+              '<div class="msg-meta">' +
+                esc(l.autor) +
+                ' · ' +
+                fmtDateTime(l.ts) +
+              '</div>' +
+
+              '<div class="msg-text">' +
+                nl2br(l.texto) +
+              '</div>' +
+
+            '</div>';
+
+          })
+          .join('')
+
+        :
+
+        '<div class="empty" style="padding:10px 0;">' +
+          'Nenhuma nota interna registrada.' +
+        '</div>'
+      ) +
+
+      '<form data-action="add-note" data-id="' + c.id + '" style="margin-top:10px;">' +
+
+        '<div class="field">' +
+          '<textarea name="nota" placeholder="Adicionar nota interna (visível só para a equipe)…">' +
+            esc(internalNoteDraft || '') +
+          '</textarea>' +
+        '</div>' +
+
+        '<button class="btn btn-sm" type="submit">' +
+          'Adicionar nota' +
+        '</button>' +
+
       '</form>' +
+
     '</div>' +
 
+
     '<div class="card">' +
+
       '<div class="section-title" style="font-size:16px;">Conclusão e encerramento</div>' +
-      '<form data-action="save-conclusao" data-id="'+c.id+'">' +
-        '<div class="field"><label>Resultado da investigação</label><select name="conclusao"><option value="">Em aberto</option>' +
-          Object.keys(CONCLUSAO_INFO).map(function(k){ return '<option value="'+k+'"'+(c.conclusao===k?' selected':'')+'>'+CONCLUSAO_INFO[k].label+'</option>'; }).join('') +
-        '</select></div>' +
-        '<div class="field"><label>Fundamentação</label><textarea name="fundamentacao">'+esc(c.fundamentacao)+'</textarea></div>' +
-        '<div class="field"><label>Medidas adotadas</label><textarea name="medidasAdotadas">'+esc(c.medidasAdotadas)+'</textarea></div>' +
-        '<button class="btn btn-primary btn-sm" type="submit">Salvar conclusão</button>' +
+
+      '<form data-action="save-conclusao" data-id="' + c.id + '">' +
+
+        '<div class="field">' +
+          '<label>Resultado da investigação</label>' +
+
+          '<select name="conclusao">' +
+
+            '<option value="">Em aberto</option>' +
+
+            Object.keys(CONCLUSAO_INFO)
+              .map(function(k){
+
+                return '<option value="' + k + '"' +
+                  (c.conclusao === k ? ' selected' : '') +
+                  '>' +
+                  CONCLUSAO_INFO[k].label +
+                  '</option>';
+
+              })
+              .join('') +
+
+          '</select>' +
+
+        '</div>' +
+
+        '<div class="field">' +
+          '<label>Fundamentação</label>' +
+          '<textarea name="fundamentacao">' +
+            esc(c.fundamentacao || '') +
+          '</textarea>' +
+        '</div>' +
+
+        '<div class="field">' +
+          '<label>Medidas adotadas</label>' +
+          '<textarea name="medidasAdotadas">' +
+            esc(c.medidasAdotadas || '') +
+          '</textarea>' +
+        '</div>' +
+
+        '<button class="btn btn-primary btn-sm" type="submit">' +
+          'Salvar conclusão' +
+        '</button>' +
+
       '</form>' +
-      (c.status!=='concluido' ?
-        '<div style="margin-top:14px;"><form data-action="encerrar-caso" data-id="'+c.id+'">' +
-          '<button class="btn btn-danger btn-sm" type="submit" '+(!c.conclusao?'disabled':'')+'>Encerrar caso</button>' +
-          (!c.conclusao ? '<div class="readonly-note">Defina um resultado da investigação antes de encerrar.</div>' : '') +
-        '</form></div>' :
-        '<div class="banner banner-good" style="margin-top:14px;">'+iconShield()+'<div>Caso encerrado em '+fmtDate(c.milestones.concluidoEm)+'.</div></div>') +
+
+      (
+        c.status !== 'concluido'
+
+        ?
+
+        '<div style="margin-top:14px;">' +
+
+          '<form data-action="encerrar-caso" data-id="' + c.id + '">' +
+
+            '<button class="btn btn-danger btn-sm" type="submit" ' +
+              (!c.conclusao ? 'disabled' : '') +
+            '>' +
+              'Encerrar caso' +
+            '</button>' +
+
+            (
+              !c.conclusao
+                ?
+                  '<div class="readonly-note">' +
+                    'Defina um resultado da investigação antes de encerrar.' +
+                  '</div>'
+                :
+                  ''
+            ) +
+
+          '</form>' +
+
+        '</div>'
+
+        :
+
+        '<div class="banner banner-good" style="margin-top:14px;">' +
+          iconShield() +
+          '<div>Caso encerrado em ' +
+            fmtDate(c.milestones && c.milestones.concluidoEm) +
+          '.</div>' +
+        '</div>'
+      ) +
+
     '</div>' +
 
+
     '<div class="card">' +
+
       '<div class="section-title" style="font-size:16px;">Comunicação com o denunciante</div>' +
-      '<div class="section-hint">Mensagens abaixo (exceto notas internas) ficam visíveis para quem consultar o protocolo.</div>' +
-      (c.log.filter(function(l){return l.tipo!=='interno';}).map(function(l){
-        var cls = l.tipo==='mensagem_equipe' ? 'equipe' : (l.tipo==='mensagem_denunciante' ? 'denunciante' : '');
-        var who = l.tipo==='mensagem_equipe' ? 'Equipe do canal' : (l.tipo==='mensagem_denunciante' ? 'Denunciante' : 'Sistema');
-        return '<div class="msg '+cls+'"><div class="msg-meta">'+who+' · '+fmtDateTime(l.ts)+'</div><div class="msg-text">'+nl2br(l.texto)+'</div></div>';
-      }).join('')) +
-      '<form data-action="send-message" data-id="'+c.id+'" style="margin-top:10px;">' +
-        '<div class="field"><textarea name="mensagem" placeholder="Escreva uma mensagem visível ao denunciante…">'+esc(equipeMsgDraft)+'</textarea></div>' +
-        '<button class="btn btn-sm" type="submit">Enviar mensagem ao denunciante</button>' +
+
+      '<div class="section-hint">' +
+        'Mensagens abaixo (exceto notas internas) ficam visíveis para quem consultar o protocolo.' +
+      '</div>' +
+
+      (
+        c.log
+          ? c.log
+              .filter(function(l){
+                return l.tipo !== 'interno';
+              })
+              .map(function(l){
+
+                var cls =
+                  l.tipo === 'mensagem_equipe'
+                    ? 'equipe'
+                    : (
+                        l.tipo === 'mensagem_denunciante'
+                          ? 'denunciante'
+                          : ''
+                      );
+
+                var who =
+                  l.tipo === 'mensagem_equipe'
+                    ? 'Equipe do canal'
+                    : (
+                        l.tipo === 'mensagem_denunciante'
+                          ? 'Denunciante'
+                          : 'Sistema'
+                      );
+
+                return '<div class="msg ' + cls + '">' +
+
+                  '<div class="msg-meta">' +
+                    who +
+                    ' · ' +
+                    fmtDateTime(l.ts) +
+                  '</div>' +
+
+                  '<div class="msg-text">' +
+                    nl2br(l.texto) +
+                  '</div>' +
+
+                '</div>';
+
+              })
+              .join('')
+
+          : ''
+      ) +
+
+      '<form data-action="send-message" data-id="' + c.id + '" style="margin-top:10px;">' +
+
+        '<div class="field">' +
+          '<textarea name="mensagem" placeholder="Escreva uma mensagem visível ao denunciante…">' +
+            esc(equipeMsgDraft || '') +
+          '</textarea>' +
+        '</div>' +
+
+        '<button class="btn btn-sm" type="submit">' +
+          'Enviar mensagem ao denunciante' +
+        '</button>' +
+
       '</form>' +
+
     '</div>' +
-  '</div>' + footerHTML();
+
+  '</div>' +
+
+  footerHTML();
 }
 
 /* ====================== admin actions ====================== */
