@@ -1584,7 +1584,9 @@ function mapearDenunciaParaCaso(d){
       false,
 
     risco:
-      d.prioridade || null,
+    d.prioridade === 'media'
+      ? 'medio'
+      : (d.prioridade || null),
 
     conflitoInteresse:
       {
