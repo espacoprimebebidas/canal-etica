@@ -383,6 +383,25 @@ var PRAZOS = [
 var STATE = null;
 try{ STATE = JSON.parse(document.getElementById('state-data').textContent); }catch(e){ STATE = {cases:[]}; }
 
+  /* ====================== SUPABASE AUTH ====================== */
+
+var SUPABASE_URL =
+  'https://zttqgkxnczzvfuxzratf.supabase.co';
+
+var SUPABASE_PUBLISHABLE_KEY =
+  'sb_publishable_NDH3uBdH8wxGGReCxn_Slg_OvxuTZjf';
+
+var supabaseClient =
+  window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_PUBLISHABLE_KEY
+  );
+
+var adminSession = null;
+var adminProfile = null;
+var adminAuthReady = false;
+var adminAuthLoading = false;
+
 var artifactApi = null;
 var artifactChecked = false;
 var readOnlyMode = false;
@@ -440,6 +459,7 @@ function caseById(id){ return STATE.cases.find(function(c){ return c.id===id; })
 var HEAD_HTML = `<head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <title>Canal de Ética Espaço Prime</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1436,40 +1456,296 @@ var internalNoteDraft = '';
 var equipeMsgDraft = '';
 
 function isAdminAuthed(){
-  try{ return sessionStorage.getItem('ep_admin_authed')==='1'; }catch(e){ return false; }
+  return !!(
+    adminAuthReady &&
+    adminSession &&
+    adminProfile &&
+    adminProfile.ativo === true
+  );
 }
-function setAdminAuthed(){
-  try{ sessionStorage.setItem('ep_admin_authed','1'); }catch(e){}
+
+async function carregarSessaoAdmin(){
+  if(adminAuthLoading) return;
+
+  adminAuthLoading = true;
+
+  try{
+
+    var resultado =
+      await supabaseClient.auth.getSession();
+
+    if(resultado.error){
+      throw resultado.error;
+    }
+
+    adminSession =
+      resultado.data.session || null;
+
+    adminProfile = null;
+
+    if(adminSession){
+
+      var perfil =
+        await supabaseClient
+          .from('perfis_admin')
+          .select('id,nome,cargo,ativo')
+          .eq('id', adminSession.user.id)
+          .eq('ativo', true)
+          .maybeSingle();
+
+      if(perfil.error){
+        console.error(
+          'Erro ao consultar perfil administrativo:',
+          perfil.error
+        );
+
+        adminSession = null;
+
+      } else if(perfil.data){
+
+        adminProfile = perfil.data;
+
+      } else {
+
+        /*
+         * O usuário existe no Auth, mas não está
+         * autorizado como administrador.
+         */
+        await supabaseClient.auth.signOut();
+
+        adminSession = null;
+        adminProfile = null;
+      }
+    }
+
+  } catch(error){
+
+    console.error(
+      'Erro ao carregar sessão administrativa:',
+      error
+    );
+
+    adminSession = null;
+    adminProfile = null;
+
+  } finally {
+
+    adminAuthReady = true;
+    adminAuthLoading = false;
+
+    render();
+
+  }
 }
 
 function viewAdmin(parts){
-  if(!isAdminAuthed()) return viewAdminGate();
+
+  if(!adminAuthReady){
+
+    return topbarHTML('admin') +
+      '<div class="container-narrow" style="padding:60px 24px;">' +
+        '<div class="card" style="max-width:420px;margin:0 auto;text-align:center;">' +
+          '<div class="spinner" style="margin:0 auto 12px;"></div>' +
+          '<div style="color:var(--ink-2);">Verificando acesso...</div>' +
+        '</div>' +
+      '</div>' +
+      footerHTML();
+
+  }
+
+  if(!isAdminAuthed()){
+    return viewAdminGate();
+  }
+
   var sub = parts[1] || 'dashboard';
-  if(sub==='caso' && parts[2]) return viewAdminCaso(parts[2]);
-  if(sub==='casos') return viewAdminCasos();
+
+  if(sub==='caso' && parts[2]){
+    return viewAdminCaso(parts[2]);
+  }
+
+  if(sub==='casos'){
+    return viewAdminCasos();
+  }
+
   return viewAdminDashboard();
 }
 
 function viewAdminGate(){
+
   return topbarHTML('admin') +
+
   '<div class="container-narrow" style="padding:60px 24px;">' +
+
     '<div class="card" style="max-width:420px;margin:0 auto;">' +
-      '<div style="width:40px;height:40px;border-radius:11px;background:var(--accent-soft);color:var(--accent);display:flex;align-items:center;justify-content:center;margin-bottom:14px;">'+iconLock()+'</div>' +
+
+      '<div style="width:40px;height:40px;border-radius:11px;background:var(--accent-soft);color:var(--accent);display:flex;align-items:center;justify-content:center;margin-bottom:14px;">' +
+        iconLock() +
+      '</div>' +
+
       '<div class="section-title">Ambiente interno</div>' +
-      '<p style="color:var(--ink-2);font-size:14.5px;">Área restrita ao Comitê de Ética e Integridade — triagem, classificação de risco, investigação e indicadores.</p>' +
-      '<div class="banner banner-warn" style="margin-bottom:16px;">'+iconWarn()+'<div>Isto é uma tela de demonstração, não uma autenticação real. Em produção, o acesso seria controlado por perfis e permissões individuais (seção 20 do manual). PIN de demonstração: <strong>0000</strong>.</div></div>' +
+
+      '<p style="color:var(--ink-2);font-size:14.5px;">' +
+        'Área restrita ao Comitê de Ética e Integridade — triagem, classificação de risco, investigação e indicadores.' +
+      '</p>' +
+
       '<form id="ep-admin-gate">' +
-        '<div class="field"><label>PIN de demonstração</label><input type="password" name="pin" placeholder="0000" autofocus></div>' +
-        '<button type="submit" class="btn btn-primary btn-block">Entrar</button>' +
+
+        '<div class="field">' +
+          '<label>E-mail</label>' +
+          '<input type="email" name="email" autocomplete="username" placeholder="seu e-mail" required>' +
+        '</div>' +
+
+        '<div class="field">' +
+          '<label>Senha</label>' +
+          '<input type="password" name="password" autocomplete="current-password" placeholder="Sua senha" required>' +
+        '</div>' +
+
+        '<div id="admin-login-error"></div>' +
+
+        '<button type="submit" class="btn btn-primary btn-block">' +
+          'Entrar' +
+        '</button>' +
+
       '</form>' +
+
     '</div>' +
-  '</div>' + footerHTML();
+
+  '</div>' +
+
+  footerHTML();
 }
 
-function adminGateSubmit(form){
+async function adminGateSubmit(form){
+
   var fd = new FormData(form);
-  if((fd.get('pin')||'')==='0000'){ setAdminAuthed(); render(); }
-  else { toast('PIN incorreto (use 0000 nesta demonstração).'); }
+
+  var email =
+    (fd.get('email') || '').trim();
+
+  var password =
+    fd.get('password') || '';
+
+  var button =
+    form.querySelector('button[type="submit"]');
+
+  if(!email || !password){
+    toast('Informe seu e-mail e sua senha.');
+    return;
+  }
+
+  if(button){
+    button.disabled = true;
+    button.dataset.originalText =
+      button.textContent;
+    button.textContent = 'Entrando...';
+  }
+
+  try{
+
+    var resultado =
+      await supabaseClient.auth.signInWithPassword({
+        email: email,
+        password: password
+      });
+
+    if(resultado.error){
+      throw resultado.error;
+    }
+
+    adminSession =
+      resultado.data.session;
+
+    /*
+     * Depois do login, verificamos se o usuário
+     * também está cadastrado como administrador
+     * em public.perfis_admin.
+     */
+
+    var perfil =
+      await supabaseClient
+        .from('perfis_admin')
+        .select('id,nome,cargo,ativo')
+        .eq('id', adminSession.user.id)
+        .eq('ativo', true)
+        .maybeSingle();
+
+    if(perfil.error){
+      throw perfil.error;
+    }
+
+    if(!perfil.data){
+
+      await supabaseClient.auth.signOut();
+
+      adminSession = null;
+      adminProfile = null;
+
+      throw new Error(
+        'Seu usuário não está autorizado para acessar a área administrativa.'
+      );
+    }
+
+    adminProfile =
+      perfil.data;
+
+    adminAuthReady = true;
+
+    toast(
+      'Acesso autorizado.'
+    );
+
+    render();
+
+  } catch(error){
+
+    console.error(
+      'Erro no login administrativo:',
+      error
+    );
+
+    adminSession = null;
+    adminProfile = null;
+
+    var errorBox =
+      document.getElementById(
+        'admin-login-error'
+      );
+
+    if(errorBox){
+
+      errorBox.innerHTML =
+        '<div class="banner banner-warn" style="margin-bottom:14px;">' +
+          iconWarn() +
+          '<div>' +
+            esc(
+              error?.message ||
+              'E-mail ou senha inválidos.'
+            ) +
+          '</div>' +
+        '</div>';
+
+    } else {
+
+      toast(
+        error?.message ||
+        'Não foi possível entrar.'
+      );
+
+    }
+
+  } finally {
+
+    if(button){
+
+      button.disabled = false;
+
+      button.textContent =
+        button.dataset.originalText ||
+        'Entrar';
+
+    }
+
+  }
 }
 
 function adminTabs(active){
@@ -1563,7 +1839,18 @@ function statTile(label, value, sub){
 }
 function adminHeader(){
   return '<div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px;margin-bottom:6px;">' +
-    '<div><div class="kicker">Comitê de Ética e Integridade</div><h1 style="font-size:26px;margin-bottom:2px;">Ambiente interno</h1></div>' +
+    ''<div>' +
+  '<div class="kicker">Comitê de Ética e Integridade</div>' +
+  '<h1 style="font-size:26px;margin-bottom:2px;">Ambiente interno</h1>' +
+  (
+    adminProfile
+      ? '<div style="font-size:13px;color:var(--ink-3);margin-top:4px;">' +
+          esc(adminProfile.nome || '') +
+          (adminProfile.cargo ? ' · ' + esc(adminProfile.cargo) : '') +
+        '</div>'
+      : ''
+  ) +
+'</div>' +' +
     '<button class="btn btn-ghost btn-sm" data-action="admin-logout">Sair</button>' +
   '</div>';
 }
@@ -1840,7 +2127,31 @@ document.addEventListener('click', function(e){
   if(!t) return;
   var action = t.dataset.action;
   if(action==='open-case'){ location.hash = '#admin/caso/'+t.dataset.id; }
-  else if(action==='admin-logout'){ try{ sessionStorage.removeItem('ep_admin_authed'); }catch(err){} location.hash = '#home'; render(); }
+  else if(action==='admin-logout'){
+  (async function(){
+
+    try{
+
+      await supabaseClient.auth.signOut();
+
+    }catch(error){
+
+      console.error(
+        'Erro ao sair:',
+        error
+      );
+
+    }
+
+    adminSession = null;
+    adminProfile = null;
+    adminAuthReady = true;
+
+    location.hash = '#home';
+    render();
+
+  })();
+}
 });
 
 document.addEventListener('change', function(e){
@@ -1855,24 +2166,58 @@ document.addEventListener('change', function(e){
 });
 
 /* ====================== boot ====================== */
-function boot(){
+async function boot(){
+
   var resumed = false;
+
   try{
-    var raw = sessionStorage.getItem('ep_resume');
+
+    var raw =
+      sessionStorage.getItem('ep_resume');
+
     if(raw){
-      var r = JSON.parse(raw);
+
+      var r =
+        JSON.parse(raw);
+
       sessionStorage.removeItem('ep_resume');
-      if(r.hash) location.hash = r.hash;
-      if(r.lookup) lookupDraft = r.lookup;
-      if(r.resultId) lookupResultId = r.resultId;
-      if(r.justSubmitted) justSubmitted = true;
+
+      if(r.hash)
+        location.hash = r.hash;
+
+      if(r.lookup)
+        lookupDraft = r.lookup;
+
+      if(r.resultId)
+        lookupResultId = r.resultId;
+
+      if(r.justSubmitted)
+        justSubmitted = true;
+
       resumed = true;
-      render();
-      if(typeof r.scroll==='number') setTimeout(function(){ window.scrollTo({top:r.scroll}); }, 30);
+
     }
+
   }catch(e){}
-  if(!resumed) render();
+
+  /*
+   * Verifica a sessão real do Supabase.
+   */
+
+  await carregarSessaoAdmin();
+
+  if(!resumed){
+
+    render();
+
+  }else{
+
+    render();
+
+  }
 }
+
+boot();
 boot();
 
 })();
