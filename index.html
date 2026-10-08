@@ -1471,10 +1471,17 @@ function mapearDenunciaParaCaso(d){
    * A interface usa "recebido".
    */
 
-  var status =
-    d.status === 'recebida'
-      ? 'recebido'
-      : d.status;
+  var statusMap = {
+    'recebida': 'recebido',
+    'triagem': 'triagem',
+    'em_apuracao': 'investigacao',
+    'aguardando_informacoes': 'aguardando_informacoes',
+    'concluida': 'concluido',
+    'improcedente': 'improcedente',
+    'arquivada': 'arquivada'
+  };
+  
+  var status = statusMap[d.status] || d.status;
 
   /*
    * O banco possui categorias em português.
@@ -1634,6 +1641,20 @@ function mapearDenunciaParaCaso(d){
 
   };
 
+}
+
+function statusInterfaceParaBanco(status){
+  var statusMap = {
+    'recebido': 'recebida',
+    'triagem': 'triagem',
+    'investigacao': 'em_apuracao',
+    'aguardando_informacoes': 'aguardando_informacoes',
+    'concluido': 'concluida',
+    'improcedente': 'improcedente',
+    'arquivada': 'arquivada'
+  };
+
+  return statusMap[status] || status;
 }
 
 async function carregarCasosAdmin(){
@@ -2619,21 +2640,69 @@ function viewAdminCaso(id){
 }
 
 /* ====================== admin actions ====================== */
-function saveTriagem(form, id){
+async function saveTriagem(form, id){
+
+  if(!isAdminAuthed()){
+    toast('Sessão administrativa inválida.');
+    return;
+  }
+
   var fd = new FormData(form);
-  commit(function(state){
-    var c = caseById(id); if(!c) return;
-    var newStatus = fd.get('status');
-    var urgente = !!fd.get('urgente');
-    if(newStatus !== c.status){
-      if(newStatus==='triagem' && !c.milestones.triagemEm) c.milestones.triagemEm = nowISO();
-      if(newStatus==='investigacao' && !c.milestones.investigacaoEm) c.milestones.investigacaoEm = nowISO();
-      c.status = newStatus;
-      c.log.push({ts:nowISO(), tipo:'sistema', autor:'Sistema', texto:'Status atualizado para "'+STATUS_INFO[newStatus].label+'".'});
+
+  var newStatus = fd.get('status');
+  var urgente = !!fd.get('urgente');
+
+  if(!newStatus){
+    toast('Selecione um status.');
+    return;
+  }
+
+  var statusBanco = statusInterfaceParaBanco(newStatus);
+
+  showOverlay(true);
+
+  try{
+
+    var resultado = await supabaseClient
+      .from('denuncias')
+      .update({
+        status: statusBanco
+      })
+      .eq('id', id);
+
+    if(resultado.error){
+      throw resultado.error;
     }
-    c.urgente = urgente;
-    c.responsavel = fd.get('responsavel') || '';
-  }, { stash:{hash:'#admin/caso/'+id} });
+
+    var c = caseById(id);
+
+    if(c){
+      c.status = newStatus;
+      c.urgente = urgente;
+    }
+
+    toast('Status salvo no Supabase.');
+
+    await carregarCasosAdmin();
+
+    render();
+
+  } catch(error){
+
+    console.error(
+      'Erro ao salvar status:',
+      error
+    );
+
+    toast(
+      'Não foi possível salvar o status.'
+    );
+
+  } finally {
+
+    showOverlay(false);
+
+  }
 }
 function saveConflito(form, id){
   var fd = new FormData(form);
@@ -2642,15 +2711,64 @@ function saveConflito(form, id){
     c.conflitoInteresse = {verificado: !!fd.get('verificado'), detalhe: fd.get('detalhe')||''};
   }, { stash:{hash:'#admin/caso/'+id} });
 }
-function saveRisco(form, id){
+async function saveRisco(form, id){
+
+  if(!isAdminAuthed()){
+    toast('Sessão administrativa inválida.');
+    return;
+  }
+
   var fd = new FormData(form);
   var risco = fd.get('risco');
-  if(!risco){ toast('Selecione um nível de risco.'); return; }
-  commit(function(state){
-    var c = caseById(id); if(!c) return;
-    c.risco = risco;
-    c.log.push({ts:nowISO(), tipo:'interno', autor:'Sistema', texto:'Classificação de risco definida como "'+RISK_INFO[risco].label+'".'});
-  }, { stash:{hash:'#admin/caso/'+id} });
+
+  if(!risco){
+    toast('Selecione um nível de risco.');
+    return;
+  }
+
+  showOverlay(true);
+
+  try{
+
+    var resultado = await supabaseClient
+      .from('denuncias')
+      .update({
+        prioridade: risco
+      })
+      .eq('id', id);
+
+    if(resultado.error){
+      throw resultado.error;
+    }
+
+    var c = caseById(id);
+
+    if(c){
+      c.risco = risco;
+    }
+
+    toast('Classificação de risco salva no Supabase.');
+
+    await carregarCasosAdmin();
+
+    render();
+
+  } catch(error){
+
+    console.error(
+      'Erro ao salvar risco:',
+      error
+    );
+
+    toast(
+      'Não foi possível salvar a classificação de risco.'
+    );
+
+  } finally {
+
+    showOverlay(false);
+
+  }
 }
 function saveInvestigacao(form, id){
   var fd = new FormData(form);
