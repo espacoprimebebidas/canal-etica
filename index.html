@@ -2742,69 +2742,147 @@ function viewAdminCaso(id){
 
 /* ====================== admin actions ====================== */
 async function saveTriagem(form, id){
-
-  if(!isAdminAuthed()){
-    toast('Sessão administrativa inválida.');
-    return;
-  }
-
-  var fd = new FormData(form);
-
-  var newStatus = fd.get('status');
-  var urgente = !!fd.get('urgente');
-
-  if(!newStatus){
-    toast('Selecione um status.');
-    return;
-  }
-
-  var statusBanco = statusInterfaceParaBanco(newStatus);
-
-  showOverlay(true);
-
-  try{
-
-    var resultado = await supabaseClient
-      .from('denuncias')
-      .update({
-        status: statusBanco
-      })
-      .eq('id', id);
-
-    if(resultado.error){
-      throw resultado.error;
+    if(!isAdminAuthed()){
+      toast('Sessão administrativa inválida.');
+      return;
     }
-
+  
+    var fd = new FormData(form);
+  
+    var newStatus = fd.get('status');
+    var responsavelId = fd.get('responsavel') || '';
+    var urgente = !!fd.get('urgente');
+  
+    if(!newStatus){
+      toast('Selecione um status.');
+      return;
+    }
+  
     var c = caseById(id);
-
-    if(c){
-      c.status = newStatus;
-      c.urgente = urgente;
+  
+    if(!c){
+      toast('Denúncia não encontrada.');
+      return;
     }
-
-    toast('Status salvo no Supabase.');
-
-    await carregarCasosAdmin();
-
-    render();
-
-  } catch(error){
-
-    console.error(
-      'Erro ao salvar status:',
-      error
-    );
-
-    toast(
-      'Não foi possível salvar o status.'
-    );
-
-  } finally {
-
-    showOverlay(false);
-
+  
+    var statusAnterior = c.status;
+    var responsavelAnteriorId = c.responsavelId || '';
+  
+    var statusBanco = statusInterfaceParaBanco(newStatus);
+  
+    showOverlay(true);
+  
+    try{
+  
+      /*
+       * Atualiza a denúncia real no Supabase.
+       */
+      var resultado =
+        await supabaseClient
+          .from('denuncias')
+          .update({
+            status: statusBanco,
+            responsavel_id: responsavelId || null
+          })
+          .eq('id', id);
+  
+      if(resultado.error){
+        throw resultado.error;
+      }
+  
+      /*
+       * Histórico do status.
+       */
+      if(statusAnterior !== newStatus){
+  
+        await registrarHistorico(
+          id,
+          'Status alterado',
+          STATUS_INFO[statusAnterior]
+            ? STATUS_INFO[statusAnterior].label +
+              ' → ' +
+              STATUS_INFO[newStatus].label
+            : newStatus
+        );
+  
+      }
+  
+      /*
+       * Histórico do responsável.
+       */
+      if(responsavelAnteriorId !== responsavelId){
+  
+        var responsavelAnterior =
+          adminProfiles.find(function(p){
+            return p.id === responsavelAnteriorId;
+          });
+  
+        var responsavelNovo =
+          adminProfiles.find(function(p){
+            return p.id === responsavelId;
+          });
+  
+        var nomeAnterior =
+          responsavelAnterior
+            ? responsavelAnterior.nome
+            : 'Não definido';
+  
+        var nomeNovo =
+          responsavelNovo
+            ? responsavelNovo.nome
+            : 'Não definido';
+  
+        await registrarHistorico(
+          id,
+          responsavelAnteriorId
+            ? 'Responsável alterado'
+            : 'Responsável definido',
+          nomeAnterior + ' → ' + nomeNovo
+        );
+  
+      }
+  
+      /*
+       * Atualiza a representação local somente
+       * depois que o Supabase confirmou a gravação.
+       */
+      c.status = newStatus;
+      c.responsavelId = responsavelId;
+  
+      c.responsavel =
+        adminProfiles.find(function(p){
+          return p.id === responsavelId;
+        })?.nome || '';
+  
+      c.urgente = urgente;
+  
+      toast('Triagem salva no Supabase.');
+  
+      /*
+       * Recarrega os dados reais do banco.
+       */
+      await carregarCasosAdmin();
+  
+      render();
+  
+    } catch(error){
+  
+      console.error(
+        'Erro ao salvar triagem:',
+        error
+      );
+  
+      toast(
+        'Não foi possível salvar a triagem.'
+      );
+  
+    } finally {
+  
+      showOverlay(false);
+  
+    }
   }
-}
+  
 function saveConflito(form, id){
   var fd = new FormData(form);
   commit(function(state){
