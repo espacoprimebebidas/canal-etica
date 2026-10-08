@@ -1464,7 +1464,224 @@ function isAdminAuthed(){
   );
 }
 
+function mapearDenunciaParaCaso(d){
+
+  /*
+   * O banco usa "recebida".
+   * A interface usa "recebido".
+   */
+
+  var status =
+    d.status === 'recebida'
+      ? 'recebido'
+      : d.status;
+
+  /*
+   * O banco possui categorias em português.
+   * A interface utiliza IDs internos para
+   * mostrar os badges e filtros.
+   */
+
+  var categorias = {
+
+    'Assédio': 'assedio_moral',
+
+    'Discriminação': 'discriminacao',
+
+    'Fraude': 'fraude',
+
+    'Corrupção': 'corrupcao',
+
+    'Conflito de interesses':
+      'conflito_interesse',
+
+    'Desvio ou apropriação de recursos':
+      'furto',
+
+    'Descumprimento de normas internas':
+      'descumprimento_politica',
+
+    'Conduta inadequada':
+      'outro',
+
+    'Segurança':
+      'risco_empresa',
+
+    'Meio ambiente':
+      'risco_empresa',
+
+    'Outro':
+      'outro'
+
+  };
+
+  var categoria =
+    categorias[d.categoria] ||
+    'outro';
+
+  return {
+
+    /*
+     * ID REAL da denúncia no Supabase
+     */
+    id:
+      d.id,
+
+    protocolo:
+      d.protocolo,
+
+    anonymous:
+      d.anonima === true,
+
+    denunciante:
+      d.anonima
+        ? null
+        : {
+            nome:
+              d.nome || '',
+
+            email:
+              d.email || '',
+
+            telefone:
+              d.telefone || '',
+
+            area:
+              d.relacao_empresa || ''
+          },
+
+    categoria:
+      categoria,
+
+    categoriaBanco:
+      d.categoria || '',
+
+    dataFato:
+      d.data_ocorrencia || '',
+
+    local:
+      d.local_ocorrencia || '',
+
+    pessoasEnvolvidas:
+      d.envolvidos || '',
+
+    descricao:
+      d.descricao || '',
+
+    testemunhas:
+      d.testemunhas || '',
+
+    evidenciasDisponiveis:
+      '',
+
+    anexosDescricao:
+      '',
+
+    status:
+      status || 'recebido',
+
+    urgente:
+      false,
+
+    risco:
+      d.prioridade || null,
+
+    conflitoInteresse:
+      {
+        verificado: false,
+        detalhe: ''
+      },
+
+    responsavel:
+      d.responsavel_id || '',
+
+    milestones:
+      {
+        recebidoEm:
+          d.criado_em || null,
+
+        triagemEm:
+          null,
+
+        investigacaoEm:
+          null,
+
+        concluidoEm:
+          status === 'concluido'
+            ? d.atualizado_em
+            : null
+      },
+
+    evidenciasAnalisadas:
+      '',
+
+    diligencias:
+      '',
+
+    conclusao:
+      null,
+
+    fundamentacao:
+      '',
+
+    medidasAdotadas:
+      '',
+
+    log:
+      []
+
+  };
+
+}
+
+async function carregarCasosAdmin(){
+
+  try{
+
+    var resultado =
+      await supabaseClient
+        .from('denuncias')
+        .select(
+          'id,protocolo,anonima,nome,email,telefone,relacao_empresa,categoria,data_ocorrencia,local_ocorrencia,envolvidos,testemunhas,descricao,status,prioridade,criado_em,atualizado_em,responsavel_id'
+        )
+        .order('criado_em', {
+          ascending: false
+        });
+
+    if(resultado.error){
+      throw resultado.error;
+    }
+
+    var denuncias =
+      resultado.data || [];
+
+    STATE.cases =
+      denuncias.map(mapearDenunciaParaCaso);
+
+    console.log(
+      'Denúncias carregadas do Supabase:',
+      STATE.cases
+    );
+
+  } catch(error){
+
+    console.error(
+      'Erro ao carregar denúncias:',
+      error
+    );
+
+    STATE.cases = [];
+
+    toast(
+      'Não foi possível carregar as denúncias.'
+    );
+
+  }
+
+}
+
 async function carregarSessaoAdmin(){
+
   if(adminAuthLoading) return;
 
   adminAuthLoading = true;
@@ -1494,28 +1711,29 @@ async function carregarSessaoAdmin(){
           .maybeSingle();
 
       if(perfil.error){
-        console.error(
-          'Erro ao consultar perfil administrativo:',
-          perfil.error
-        );
+        throw perfil.error;
+      }
 
-        adminSession = null;
+      if(!perfil.data){
 
-      } else if(perfil.data){
-
-        adminProfile = perfil.data;
-
-      } else {
-
-        /*
-         * O usuário existe no Auth, mas não está
-         * autorizado como administrador.
-         */
         await supabaseClient.auth.signOut();
 
         adminSession = null;
         adminProfile = null;
+
+      } else {
+
+        adminProfile = perfil.data;
+
+        /*
+         * Usuário autenticado e autorizado.
+         * Agora carregamos as denúncias reais.
+         */
+
+        await carregarCasosAdmin();
+
       }
+
     }
 
   } catch(error){
