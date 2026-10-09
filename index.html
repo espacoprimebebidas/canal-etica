@@ -1225,37 +1225,63 @@ function viewProtocolo(){
   footerHTML();
 }
 
-function protocolResultHTML(c){
-  var visibleLog = c.log.filter(function(l){ return l.tipo!=='interno'; });
-  var identLabel = c.anonymous ? 'Manifestação anônima' : 'Manifestação identificada';
+function protocolResultHTML(c) {
+  var mensagens = Array.isArray(c.mensagens) ? c.mensagens : [];
+
+  var visibleLog = mensagens.map(function(m) {
+    var ehEquipe = m.remetente_tipo === 'administrador';
+
+    return {
+      ts: m.criado_em,
+      tipo: ehEquipe ? 'mensagem_equipe' : 'mensagem_denunciante',
+      texto: m.mensagem,
+      autor: ehEquipe ? 'Equipe do canal' : 'Você'
+    };
+  });
+
+  var identLabel = c.anonymous
+    ? 'Manifestação anônima'
+    : 'Manifestação identificada';
+
   return '' +
-  '<div class="card" style="margin-top:20px;">' +
-    '<div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:14px;align-items:flex-start;">' +
-      '<div><div class="field-hint" style="margin:0 0 4px;">PROTOCOLO</div><div class="proto-code">'+esc(c.protocolo)+'</div></div>' +
-      '<div style="text-align:right;"><div class="field-hint" style="margin:0 0 4px;">CÓDIGO DE ACESSO</div><div class="access-code">'+esc(c.accessCode)+'</div></div>' +
-    '</div>' +
-    '<div class="hr"></div>' +
-    stepperHTML(c.status) +
-    '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:14px;">' + catBadge(c.categoria) + '<span class="badge badge-neutral">'+identLabel+'</span></div>' +
-    '<p class="field-hint" style="margin-top:14px;">Registrada em '+fmtDate(c.createdAt)+'.'+(c.status==='concluido' && c.milestones.concluidoEm ? ' Encerrada em '+fmtDate(c.milestones.concluidoEm)+'.' : '')+'</p>' +
-    (c.status==='concluido' && c.conclusao ? '<div style="margin-top:10px;">Resultado: '+conclusaoBadge(c.conclusao)+'</div>' : '') +
-  '</div>' +
-  '<div class="card">' +
-    '<div class="section-title" style="font-size:16px;">Comunicação</div>' +
-    '<div class="section-hint">Mensagens trocadas com a equipe responsável, preservando seu anonimato.</div>' +
-    (visibleLog.length ? visibleLog.map(function(l){
-      var cls = l.tipo==='mensagem_equipe' ? 'equipe' : (l.tipo==='mensagem_denunciante' ? 'denunciante' : '');
-      var who = l.tipo==='mensagem_equipe' ? 'Equipe do canal' : (l.tipo==='mensagem_denunciante' ? 'Você' : 'Sistema');
-      return '<div class="msg '+cls+'"><div class="msg-meta">'+who+' · '+fmtDateTime(l.ts)+'</div><div class="msg-text">'+nl2br(l.texto)+'</div></div>';
-    }).join('') : '<div class="empty">Nenhuma atualização registrada ainda.</div>') +
-    (c.status!=='concluido' ? (
+    '<div class="card" style="margin-top:20px;">' +
+      '<div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:14px;align-items:flex-start;">' +
+        '<div><div class="field-hint" style="margin:0 0 4px;">PROTOCOLO</div><div class="proto-code">' + esc(c.protocolo) + '</div></div>' +
+        '<div style="text-align:right;"><div class="field-hint" style="margin:0 0 4px;">CÓDIGO DE ACESSO</div><div class="access-code">' + esc(c.accessCode) + '</div></div>' +
+      '</div>' +
       '<div class="hr"></div>' +
-      '<form id="ep-reply">' +
-        '<div class="field"><label>Enviar uma mensagem para a equipe</label><textarea name="texto" placeholder="Adicione informações, responda a uma pergunta da equipe, etc.">'+esc(replyDraft)+'</textarea></div>' +
-        '<button type="submit" class="btn">Enviar mensagem</button>' +
-      '</form>'
-    ) : '') +
-  '</div>';
+      stepperHTML(c.status) +
+      '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:14px;">' +
+        catBadge(c.categoria) +
+        '<span class="badge badge-neutral">' + identLabel + '</span>' +
+      '</div>' +
+      '<p class="field-hint" style="margin-top:14px;">Registrada em ' + fmtDate(c.createdAt) + '.</p>' +
+      (c.status === 'concluido' && c.conclusao
+        ? '<div style="margin-top:10px;">Resultado: ' + conclusaoBadge(c.conclusao) + '</div>'
+        : '') +
+    '</div>' +
+    '<div class="card">' +
+      '<div class="section-title" style="font-size:16px;">Comunicação</div>' +
+      '<div class="section-hint">Mensagens trocadas com a equipe responsável, preservando seu anonimato.</div>' +
+      (visibleLog.length
+        ? visibleLog.map(function(l) {
+            var cls = l.tipo === 'mensagem_equipe' ? 'equipe' : 'denunciante';
+            var who = l.autor;
+
+            return '<div class="msg ' + cls + '">' +
+              '<div class="msg-meta">' + who + ' · ' + fmtDateTime(l.ts) + '</div>' +
+              '<div class="msg-text">' + nl2br(esc(l.texto)) + '</div>' +
+            '</div>';
+          }).join('')
+        : '<div class="empty">Nenhuma atualização registrada ainda.</div>') +
+      (c.status !== 'concluido'
+        ? '<div class="hr"></div>' +
+          '<form id="ep-reply">' +
+            '<div class="field"><label>Enviar uma mensagem para a equipe</label><textarea name="texto" placeholder="Adicione informações, responda a uma pergunta da equipe, etc.">' + esc(replyDraft) + '</textarea></div>' +
+            '<button type="submit" class="btn">Enviar mensagem</button>' +
+          '</form>'
+        : '') +
+    '</div>';
 }
 
 async function lookupSubmit(form){
