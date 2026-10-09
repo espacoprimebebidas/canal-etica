@@ -1308,6 +1308,7 @@ async function lookupSubmit(form){
     var resultado = await response.json();
 
     console.log('Resposta da consulta:', resultado);
+    console.log('Mensagens recebidas:', resultado.mensagens);
 
     if(!response.ok){
       throw new Error(
