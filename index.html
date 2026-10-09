@@ -1464,17 +1464,91 @@ async function lookupSubmit(form){
   }
 }
 
-function replySubmit(form, caseId){
+async function replySubmit(form, caseId) {
   var fd = new FormData(form);
-  var texto = (fd.get('texto')||'').trim();
-  if(!texto) return;
-  replyDraft = '';
-  commit(function(state){
-    var c = caseById(caseId);
-    if(!c) return;
-    c.log.push({ts:nowISO(), tipo:'mensagem_denunciante', autor:'Denunciante', texto:texto});
-  }, { stash:{hash:'#protocolo', lookup:lookupDraft, resultId:caseId} });
-  toast('Mensagem enviada à equipe do canal.');
+  var texto = (fd.get('texto') || '').trim();
+
+  if (!texto) {
+    toast('Digite uma mensagem antes de enviar.');
+    return;
+  }
+
+  if (texto.length > 5000) {
+    toast('A mensagem deve ter no máximo 5.000 caracteres.');
+    return;
+  }
+
+  var caso = caseById(caseId);
+
+  if (!caso || !caso.protocolo || !caso.accessCode) {
+    toast('Consulte novamente o protocolo antes de enviar.');
+    return;
+  }
+
+  var submitButton = form.querySelector('button[type="submit"]');
+
+  if (submitButton) {
+    submitButton.disabled = true;
+    submitButton.dataset.originalText = submitButton.textContent;
+    submitButton.textContent = 'Enviando...';
+  }
+
+  try {
+    var endpoint =
+      'https://zttqgkxnczzvfuxzratf.supabase.co/functions/v1/responder-denuncia';
+
+    var response = await fetch(endpoint, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'apikey': 'sb_publishable_NDH3uBdH8wxGGReCxn_Slg_OvxuTZjf'
+      },
+      body: JSON.stringify({
+        protocolo: caso.protocolo,
+        senha: caso.accessCode,
+        mensagem: texto
+      })
+    });
+
+    var resultado = await response.json();
+
+    if (!response.ok || !resultado.sucesso) {
+      throw new Error(
+        resultado.erro ||
+        'Não foi possível enviar a mensagem.'
+      );
+    }
+
+    if (!Array.isArray(caso.mensagens)) {
+      caso.mensagens = [];
+    }
+
+    if (resultado.mensagem) {
+      caso.mensagens.push(resultado.mensagem);
+    }
+
+    window.ULTIMA_CONSULTA_DENUNCIA = caso;
+    replyDraft = '';
+
+    render();
+
+    toast('Mensagem enviada à equipe do canal.');
+
+  } catch (error) {
+    console.error('Erro ao enviar resposta:', error);
+
+    toast(
+      error.message ||
+      'Não foi possível enviar a mensagem. Tente novamente.'
+    );
+
+  } finally {
+    if (submitButton) {
+      submitButton.disabled = false;
+      submitButton.textContent =
+        submitButton.dataset.originalText || 'Enviar mensagem';
+    }
+  }
 }
 
 /* ====================== VIEW: admin ====================== */
