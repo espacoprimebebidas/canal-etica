@@ -1379,8 +1379,8 @@ async function lookupSubmit(form){
         denuncia.prioridade || 'media',
 
       mensagens:
-        Array.isArray(denuncia.mensagens)
-          ? denuncia.mensagens
+        Array.isArray(resultado.mensagens)
+          ? resultado.mensagens
           : [],
 
       log: []
