@@ -1636,13 +1636,13 @@ function mapearDenunciaParaCaso(d){
     d.diligencias || '',
 
     conclusao:
-      null,
+      d.conclusao || null,
 
     fundamentacao:
-      '',
+      d.fundamentacao || '',
 
     medidasAdotadas:
-      '',
+      d.medidas_adotadas || '',
 
     log:
       []
@@ -1695,7 +1695,7 @@ async function carregarCasosAdmin(){
       await supabaseClient
         .from('denuncias')
         .select(
-          'id,protocolo,anonima,nome,email,telefone,relacao_empresa,categoria,data_ocorrencia,local_ocorrencia,envolvidos,testemunhas,descricao,status,prioridade,criado_em,atualizado_em,responsavel_id,evidencias_analisadas,diligencias'
+          'id,protocolo,anonima,nome,email,telefone,relacao_empresa,categoria,data_ocorrencia,local_ocorrencia,envolvidos,testemunhas,descricao,status,prioridade,criado_em,atualizado_em,responsavel_id,evidencias_analisadas,diligencias,conclusao,fundamentacao,medidas_adotadas,concluido_em'
         )
         .order('criado_em', {
           ascending: false
@@ -3155,23 +3155,181 @@ async function addNote(form, id){
   }
 }
 
-function saveConclusao(form, id){
+
+async function saveConclusao(form, id){
+
+  if(!isAdminAuthed()){
+    toast('Sessão administrativa inválida.');
+    return;
+  }
+
   var fd = new FormData(form);
-  commit(function(state){
-    var c = caseById(id); if(!c) return;
-    c.conclusao = fd.get('conclusao') || null;
-    c.fundamentacao = fd.get('fundamentacao')||'';
-    c.medidasAdotadas = fd.get('medidasAdotadas')||'';
-  }, { stash:{hash:'#admin/caso/'+id} });
+
+  var conclusao = (fd.get('conclusao') || '').trim();
+  var fundamentacao = (fd.get('fundamentacao') || '').trim();
+  var medidasAdotadas = (fd.get('medidasAdotadas') || '').trim();
+
+  var c = caseById(id);
+
+  if(!c){
+    toast('Denúncia não encontrada.');
+    return;
+  }
+
+  if(conclusao && !CONCLUSAO_INFO[conclusao]){
+    toast('Selecione um resultado válido.');
+    return;
+  }
+
+  var mudou =
+    conclusao !== (c.conclusao || '') ||
+    fundamentacao !== (c.fundamentacao || '') ||
+    medidasAdotadas !== (c.medidasAdotadas || '');
+
+  if(!mudou){
+    toast('Nenhuma alteração foi feita.');
+    return;
+  }
+
+  showOverlay(true);
+
+  try{
+
+    var resultado = await supabaseClient
+      .from('denuncias')
+      .update({
+        conclusao: conclusao || null,
+        fundamentacao: fundamentacao,
+        medidas_adotadas: medidasAdotadas
+      })
+      .eq('id', id);
+
+    if(resultado.error){
+      throw resultado.error;
+    }
+
+    var alteracoes = [];
+
+    if(conclusao !== (c.conclusao || '')){
+      alteracoes.push(
+        'Resultado: ' +
+        (c.conclusao
+          ? CONCLUSAO_INFO[c.conclusao].label
+          : 'Em aberto') +
+        ' → ' +
+        (conclusao
+          ? CONCLUSAO_INFO[conclusao].label
+          : 'Em aberto')
+      );
+    }
+
+    if(fundamentacao !== (c.fundamentacao || '')){
+      alteracoes.push('Fundamentação atualizada');
+    }
+
+    if(medidasAdotadas !== (c.medidasAdotadas || '')){
+      alteracoes.push('Medidas adotadas atualizadas');
+    }
+
+    await registrarHistorico(
+      id,
+      'Conclusão atualizada',
+      alteracoes.join('; ')
+    );
+
+    await carregarCasosAdmin();
+
+    toast('Conclusão salva no Supabase.');
+
+    render();
+
+  }catch(error){
+
+    console.error('Erro ao salvar conclusão:', error);
+
+    toast('Não foi possível salvar a conclusão.');
+
+  }finally{
+
+    showOverlay(false);
+
+  }
 }
-function encerrarCaso(id){
-  commit(function(state){
-    var c = caseById(id); if(!c || !c.conclusao) return;
-    c.status = 'concluido';
-    c.milestones.concluidoEm = nowISO();
-    c.log.push({ts:nowISO(), tipo:'sistema', autor:'Sistema', texto:'Caso encerrado. Resultado: '+CONCLUSAO_INFO[c.conclusao].label+'.'});
-  }, { stash:{hash:'#admin/caso/'+id} });
+
+
+async function encerrarCaso(id){
+
+  if(!isAdminAuthed()){
+    toast('Sessão administrativa inválida.');
+    return;
+  }
+
+  var c = caseById(id);
+
+  if(!c){
+    toast('Denúncia não encontrada.');
+    return;
+  }
+
+  if(!c.conclusao || !CONCLUSAO_INFO[c.conclusao]){
+    toast('Defina um resultado antes de encerrar.');
+    return;
+  }
+
+  if(c.status === 'concluido'){
+    toast('Esta denúncia já está encerrada.');
+    return;
+  }
+
+  if(!window.confirm(
+    'Deseja realmente encerrar esta denúncia?'
+  )){
+    return;
+  }
+
+  showOverlay(true);
+
+  try{
+
+    var dataConclusao = new Date().toISOString();
+
+    var resultado = await supabaseClient
+      .from('denuncias')
+      .update({
+        status: 'concluida',
+        concluido_em: dataConclusao
+      })
+      .eq('id', id);
+
+    if(resultado.error){
+      throw resultado.error;
+    }
+
+    await registrarHistorico(
+      id,
+      'Denúncia encerrada',
+      'Resultado: ' + CONCLUSAO_INFO[c.conclusao].label
+    );
+
+    await carregarCasosAdmin();
+
+    toast('Denúncia encerrada com sucesso.');
+
+    render();
+
+  }catch(error){
+
+    console.error('Erro ao encerrar denúncia:', error);
+
+    toast('Não foi possível encerrar a denúncia.');
+
+  }finally{
+
+    showOverlay(false);
+
+  }
 }
+
 function sendMessage(form, id){
   var fd = new FormData(form);
   var texto = (fd.get('mensagem')||'').trim();
