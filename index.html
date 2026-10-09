@@ -2773,19 +2773,18 @@ function viewAdminCaso(id){
           : ''
       ) +
 
+      
       '<form data-action="send-message" data-id="' + c.id + '" style="margin-top:10px;">' +
-
         '<div class="field">' +
-          '<textarea name="mensagem" placeholder="Escreva uma mensagem visível ao denunciante…">' +
+          '<textarea name="mensagem" placeholder="Escreva uma mensagem visível ao denunciante...">' +
             esc(equipeMsgDraft || '') +
           '</textarea>' +
         '</div>' +
-
         '<button class="btn btn-sm" type="submit">' +
           'Enviar mensagem ao denunciante' +
         '</button>' +
-
       '</form>' +
+
 
     '</div>' +
 
@@ -3343,7 +3342,8 @@ async function sendMessage(form, id) {
     return;
   }
 
-  var mensagem = (equipeMsgDraft || '').trim();
+  var campoMensagem = form.querySelector('[name="mensagem"]');
+  var mensagem = campoMensagem ? campoMensagem.value.trim() : '';
 
   if (!mensagem) {
     alert('Digite uma mensagem antes de enviar.');
