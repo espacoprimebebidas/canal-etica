@@ -1788,7 +1788,6 @@ async function registrarHistorico(denunciaId, acao, detalhes){
 
 }
 
-
 async function carregarCasosAdmin() {
   try {
     var resultado = await supabaseClient
@@ -1819,6 +1818,10 @@ async function carregarCasosAdmin() {
     if (resultadoMensagens.error) throw resultadoMensagens.error;
 
     var mensagensAdmin = resultadoMensagens.data || [];
+    console.log(
+      'Mensagens carregadas do Supabase:',
+      mensagensAdmin
+    );
 
     STATE.cases = denuncias.map(function(d) {
       var caso = mapearDenunciaParaCaso(d);
@@ -1880,8 +1883,7 @@ async function carregarCasosAdmin() {
     toast('Não foi possível carregar as denúncias.');
   }
 }
-
-
+  
 async function carregarSessaoAdmin(){
 
   if(adminAuthLoading) return;
