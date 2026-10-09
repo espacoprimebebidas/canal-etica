@@ -1629,11 +1629,11 @@ function mapearDenunciaParaCaso(d){
             : null
       },
 
-    evidenciasAnalisadas:
-      '',
-
-    diligencias:
-      '',
+   evidenciasAnalisadas:
+    d.evidencias_analisadas || '',
+    
+   diligencias:
+    d.diligencias || '',
 
     conclusao:
       null,
@@ -1695,7 +1695,7 @@ async function carregarCasosAdmin(){
       await supabaseClient
         .from('denuncias')
         .select(
-          'id,protocolo,anonima,nome,email,telefone,relacao_empresa,categoria,data_ocorrencia,local_ocorrencia,envolvidos,testemunhas,descricao,status,prioridade,criado_em,atualizado_em,responsavel_id'
+          'id,protocolo,anonima,nome,email,telefone,relacao_empresa,categoria,data_ocorrencia,local_ocorrencia,envolvidos,testemunhas,descricao,status,prioridade,criado_em,atualizado_em,responsavel_id,evidencias_analisadas,diligencias'
         )
         .order('criado_em', {
           ascending: false
@@ -1732,26 +1732,32 @@ async function carregarCasosAdmin(){
         return h.denuncia_id === d.id;
       });
 
+    
     caso.log =
       historicoCaso.map(function(h){
-
+    
         var perfil =
           adminProfiles.find(function(p){
             return p.id === h.usuario_id;
           });
-
+    
         return {
           ts: h.criado_em,
-          tipo: 'interno',
+          tipo: h.acao === 'Nota interna'
+            ? 'interno'
+            : 'historico',
           autor: perfil
             ? perfil.nome
             : 'Administrador',
           texto:
-            h.acao +
-            (h.detalhes ? ': ' + h.detalhes : '')
+            h.acao === 'Nota interna'
+              ? h.detalhes
+              : h.acao +
+                (h.detalhes ? ': ' + h.detalhes : '')
         };
-
+    
       });
+
 
     return caso;
 
@@ -2722,10 +2728,11 @@ function viewAdminCaso(id){
 
       (
         c.log
-          ? c.log
-              .filter(function(l){
-                return l.tipo !== 'interno';
-              })
+          ? c.log.filter(function(l){
+            return l.tipo === 'mensagem_equipe' ||
+                   l.tipo === 'mensagem_denunciante' ||
+                   l.tipo === 'sistema';
+          })
               .map(function(l){
 
                 var cls =
@@ -2996,24 +3003,158 @@ async function saveRisco(form, id){
 
   }
 }
-function saveInvestigacao(form, id){
+
+async function saveInvestigacao(form, id){
+
+  if(!isAdminAuthed()){
+    toast('Sessão administrativa inválida.');
+    return;
+  }
+
   var fd = new FormData(form);
-  commit(function(state){
-    var c = caseById(id); if(!c) return;
-    c.evidenciasAnalisadas = fd.get('evidenciasAnalisadas')||'';
-    c.diligencias = fd.get('diligencias')||'';
-  }, { stash:{hash:'#admin/caso/'+id} });
+
+  var evidencias =
+    (fd.get('evidenciasAnalisadas') || '').trim();
+
+  var diligencias =
+    (fd.get('diligencias') || '').trim();
+
+  var c = caseById(id);
+
+  if(!c){
+    toast('Denúncia não encontrada.');
+    return;
+  }
+
+  var evidenciasAnteriores =
+    c.evidenciasAnalisadas || '';
+
+  var diligenciasAnteriores =
+    c.diligencias || '';
+
+  if(
+    evidencias === evidenciasAnteriores &&
+    diligencias === diligenciasAnteriores
+  ){
+    toast('Nenhuma alteração foi feita.');
+    return;
+  }
+
+  showOverlay(true);
+
+  try{
+
+    var resultado = await supabaseClient
+      .from('denuncias')
+      .update({
+        evidencias_analisadas: evidencias,
+        diligencias: diligencias
+      })
+      .eq('id', id);
+
+    if(resultado.error){
+      throw resultado.error;
+    }
+
+    var alteracoes = [];
+
+    if(evidencias !== evidenciasAnteriores){
+      alteracoes.push('Evidências analisadas atualizadas');
+    }
+
+    if(diligencias !== diligenciasAnteriores){
+      alteracoes.push('Entrevistas/diligências atualizadas');
+    }
+
+    await registrarHistorico(
+      id,
+      'Investigação atualizada',
+      alteracoes.join('; ')
+    );
+
+    await carregarCasosAdmin();
+
+    toast('Investigação salva no Supabase.');
+
+    render();
+
+  }catch(error){
+
+    console.error(
+      'Erro ao salvar investigação:',
+      error
+    );
+
+    toast(
+      'Não foi possível salvar a investigação.'
+    );
+
+  }finally{
+
+    showOverlay(false);
+
+  }
 }
-function addNote(form, id){
+
+
+async function addNote(form, id){
+
+  if(!isAdminAuthed()){
+    toast('Sessão administrativa inválida.');
+    return;
+  }
+
   var fd = new FormData(form);
-  var nota = (fd.get('nota')||'').trim();
-  if(!nota) return;
-  internalNoteDraft = '';
-  commit(function(state){
-    var c = caseById(id); if(!c) return;
-    c.log.push({ts:nowISO(), tipo:'interno', autor:'Equipe', texto:nota});
-  }, { stash:{hash:'#admin/caso/'+id} });
+  var nota = (fd.get('nota') || '').trim();
+
+  if(!nota){
+    toast('Escreva uma nota antes de adicionar.');
+    return;
+  }
+
+  var c = caseById(id);
+
+  if(!c){
+    toast('Denúncia não encontrada.');
+    return;
+  }
+
+  showOverlay(true);
+
+  try{
+
+    await registrarHistorico(
+      id,
+      'Nota interna',
+      nota
+    );
+
+    internalNoteDraft = '';
+
+    await carregarCasosAdmin();
+
+    toast('Nota interna registrada.');
+
+    render();
+
+  }catch(error){
+
+    console.error(
+      'Erro ao registrar nota interna:',
+      error
+    );
+
+    toast(
+      'Não foi possível registrar a nota.'
+    );
+
+  }finally{
+
+    showOverlay(false);
+
+  }
 }
+
 function saveConclusao(form, id){
   var fd = new FormData(form);
   commit(function(state){
