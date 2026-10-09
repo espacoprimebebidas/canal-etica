@@ -1687,103 +1687,99 @@ async function registrarHistorico(denunciaId, acao, detalhes){
 
 }
 
-async function carregarCasosAdmin(){
 
-  try{
+async function carregarCasosAdmin() {
+  try {
+    var resultado = await supabaseClient
+      .from('denuncias')
+      .select(
+        'id,protocolo,anonima,nome,email,telefone,relacao_empresa,categoria,data_ocorrencia,local_ocorrencia,envolvidos,testemunhas,descricao,status,prioridade,criado_em,atualizado_em,responsavel_id,evidencias_analisadas,diligencias,conclusao,fundamentacao,medidas_adotadas,concluido_em'
+      )
+      .order('criado_em', { ascending: false });
 
-    var resultado =
-      await supabaseClient
-        .from('denuncias')
-        .select(
-          'id,protocolo,anonima,nome,email,telefone,relacao_empresa,categoria,data_ocorrencia,local_ocorrencia,envolvidos,testemunhas,descricao,status,prioridade,criado_em,atualizado_em,responsavel_id,evidencias_analisadas,diligencias,conclusao,fundamentacao,medidas_adotadas,concluido_em'
-        )
-        .order('criado_em', {
-          ascending: false
-        });
+    if (resultado.error) throw resultado.error;
 
-    if(resultado.error){
-      throw resultado.error;
-    }
+    var denuncias = resultado.data || [];
 
-    var denuncias =
-      resultado.data || [];
+    var historicoResultado = await supabaseClient
+      .from('denuncia_historico')
+      .select('id,denuncia_id,usuario_id,acao,detalhes,criado_em')
+      .order('criado_em', { ascending: true });
 
-    var historicoResultado =
-      await supabaseClient
-        .from('denuncia_historico')
-        .select('id,denuncia_id,usuario_id,acao,detalhes,criado_em')
-        .order('criado_em', { ascending:true });
-    
-    if(historicoResultado.error){
-      throw historicoResultado.error;
-    }
-    
-    var historicos =
-      historicoResultado.data || [];
+    if (historicoResultado.error) throw historicoResultado.error;
 
-    STATE.cases =
-  denuncias.map(function(d){
+    var historicos = historicoResultado.data || [];
 
-    var caso =
-      mapearDenunciaParaCaso(d);
+    var resultadoMensagens = await supabaseClient
+      .from('denuncia_mensagens')
+      .select('id,denuncia_id,remetente_tipo,remetente_id,mensagem,criado_em')
+      .order('criado_em', { ascending: true });
 
-    var historicoCaso =
-      historicos.filter(function(h){
+    if (resultadoMensagens.error) throw resultadoMensagens.error;
+
+    var mensagensAdmin = resultadoMensagens.data || [];
+
+    STATE.cases = denuncias.map(function(d) {
+      var caso = mapearDenunciaParaCaso(d);
+
+      var historicoCaso = historicos.filter(function(h) {
         return h.denuncia_id === d.id;
       });
 
-    
-    caso.log =
-      historicoCaso.map(function(h){
-    
-        var perfil =
-          adminProfiles.find(function(p){
-            return p.id === h.usuario_id;
-          });
-    
-        return {
-          ts: h.criado_em,
-          tipo: h.acao === 'Nota interna'
-            ? 'interno'
-            : 'historico',
-          autor: perfil
-            ? perfil.nome
-            : 'Administrador',
-          texto:
-            h.acao === 'Nota interna'
-              ? h.detalhes
-              : h.acao +
-                (h.detalhes ? ': ' + h.detalhes : '')
-        };
-    
+      var mensagensCaso = mensagensAdmin.filter(function(m) {
+        return m.denuncia_id === d.id;
       });
 
+      var logHistorico = historicoCaso.map(function(h) {
+        var perfil = adminProfiles.find(function(p) {
+          return p.id === h.usuario_id;
+        });
 
-    return caso;
+        return {
+          ts: h.criado_em,
+          tipo: h.acao === 'Nota interna' ? 'interno' : 'historico',
+          autor: perfil ? perfil.nome : 'Administrador',
+          texto: h.acao === 'Nota interna'
+            ? h.detalhes
+            : h.acao + (h.detalhes ? ': ' + h.detalhes : '')
+        };
+      });
 
-  });
+      var logMensagens = mensagensCaso.map(function(m) {
+        var perfil = adminProfiles.find(function(p) {
+          return p.id === m.remetente_id;
+        });
+
+        var ehAdministrador = m.remetente_tipo === 'administrador';
+
+        return {
+          ts: m.criado_em,
+          tipo: ehAdministrador ? 'mensagem_equipe' : 'mensagem_denunciante',
+          autor: ehAdministrador
+            ? (perfil ? perfil.nome : 'Equipe do canal')
+            : 'Denunciante',
+          texto: m.mensagem
+        };
+      });
+
+      caso.log = logHistorico.concat(logMensagens).sort(function(a, b) {
+        return new Date(a.ts).getTime() - new Date(b.ts).getTime();
+      });
+
+      return caso;
+    });
 
     console.log(
       'Denúncias carregadas do Supabase:',
       STATE.cases
     );
+  } catch (error) {
+    console.error('Erro ao carregar denúncias:', error);
 
-  } catch(error){
-
-    console.error(
-      'Erro ao carregar denúncias:',
-      error
-    );
-
-    STATE.cases = [];
-
-    toast(
-      'Não foi possível carregar as denúncias.'
-    );
-
+    toast('Não foi possível carregar as denúncias.');
   }
-
 }
+
 
 async function carregarSessaoAdmin(){
 
