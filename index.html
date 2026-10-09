@@ -3330,16 +3330,55 @@ async function encerrarCaso(id){
   }
 }
 
-function sendMessage(form, id){
-  var fd = new FormData(form);
-  var texto = (fd.get('mensagem')||'').trim();
-  if(!texto) return;
-  equipeMsgDraft = '';
-  commit(function(state){
-    var c = caseById(id); if(!c) return;
-    c.log.push({ts:nowISO(), tipo:'mensagem_equipe', autor:'Equipe', texto:texto});
-  }, { stash:{hash:'#admin/caso/'+id} });
+
+async function sendMessage(form, id) {
+  if (!isAdminAuthed()) {
+    alert('Faça login para enviar uma mensagem.');
+    return;
+  }
+
+  var caso = caseById(id);
+  if (!caso) {
+    alert('Denúncia não encontrada.');
+    return;
+  }
+
+  var mensagem = (equipeMsgDraft || '').trim();
+
+  if (!mensagem) {
+    alert('Digite uma mensagem antes de enviar.');
+    return;
+  }
+
+  try {
+    var resultado = await supabaseClient
+      .from('denuncia_mensagens')
+      .insert({
+        denuncia_id: caso.id,
+        remetente_tipo: 'administrador',
+        remetente_id: adminSession.user.id,
+        mensagem: mensagem
+      });
+
+    if (resultado.error) throw resultado.error;
+
+    await registrarHistorico(
+      caso.id,
+      'Mensagem enviada ao denunciante',
+      'Mensagem registrada na comunicação do canal.'
+    );
+
+    equipeMsgDraft = '';
+
+    await carregarCasosAdmin();
+    render();
+
+  } catch (erro) {
+    console.error('Erro ao enviar mensagem:', erro);
+    alert('Não foi possível enviar a mensagem. Verifique os dados e tente novamente.');
+  }
 }
+
 
 /* ====================== render dispatcher ====================== */
 function render(){
