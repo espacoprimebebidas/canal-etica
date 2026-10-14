@@ -1007,11 +1007,31 @@ function catBadge(catId){
   if(!found) return '<span class="badge badge-neutral">Não informado</span>';
   return '<span class="badge badge-cat" style="background:color-mix(in srgb, var('+found.group.color+') 14%, var(--surface));color:var('+found.group.color+');border-color:color-mix(in srgb, var('+found.group.color+') 40%, transparent);"><span class="dot" style="background:var('+found.group.color+')"></span>'+esc(found.item.label)+'</span>';
 }
-function riskBadge(risk){
-  if(!risk) return '<span class="badge badge-neutral">Não classificado</span>';
-  var r = RISK_INFO[risk];
-  return '<span class="badge badge-'+r.cls+'"><span class="dot"></span>'+esc(r.label)+'</span>';
+
+function riskBadge(risk) {
+  if (!risk) {
+    return '<span class="badge badge-neutral">Não classificado</span>';
+  }
+
+  var mapaRisco = {
+    baixa: 'baixo',
+    media: 'medio',
+    alta: 'alto',
+    critica: 'critico'
+  };
+
+  var riscoInterface = mapaRisco[risk] || risk;
+  var r = RISK_INFO[riscoInterface];
+
+  if (!r) {
+    console.warn('Classificação de risco desconhecida:', risk);
+    return '<span class="badge badge-neutral">Risco não reconhecido</span>';
+  }
+
+  return '<span class="badge badge-' + r.cls + '"><span class="dot"></span>' +
+    esc(r.label) + '</span>';
 }
+
 function conclusaoBadge(c){
   if(!c) return '<span class="badge badge-neutral">Em aberto</span>';
   var r = CONCLUSAO_INFO[c];
@@ -1879,10 +1899,12 @@ function mapearDenunciaParaCaso(d){
     urgente:
       false,
 
-    risco:
-    d.prioridade === 'media'
-      ? 'medio'
-      : (d.prioridade || null),
+    risco: ({
+      baixa: 'baixo',
+      media: 'medio',
+      alta: 'alto',
+      critica: 'critico'
+    })[d.prioridade] || null,
 
     conflitoInteresse:
       {
