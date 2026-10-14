@@ -835,6 +835,164 @@ function toast(msg){
   toastTimer = setTimeout(function(){ t.classList.remove('show'); }, 3200);
 }
 
+function mostrarPopupProtocolo(protocolo, senha) {
+  var anterior = document.getElementById('ep-popup-protocolo');
+  if (anterior) anterior.remove();
+
+  var overlay = document.createElement('div');
+  overlay.id = 'ep-popup-protocolo';
+
+  overlay.style.cssText = [
+    'position:fixed',
+    'inset:0',
+    'z-index:99999',
+    'display:flex',
+    'align-items:center',
+    'justify-content:center',
+    'padding:20px',
+    'background:rgba(0,0,0,.72)',
+    'backdrop-filter:blur(4px)'
+  ].join(';');
+
+  var modal = document.createElement('div');
+  modal.style.cssText = [
+    'position:relative',
+    'width:100%',
+    'max-width:460px',
+    'max-height:90vh',
+    'overflow-y:auto',
+    'padding:30px',
+    'border:1px solid var(--line,#30343b)',
+    'border-radius:18px',
+    'background:var(--surface,#11151b)',
+    'color:var(--ink,#f5f5f5)',
+    'box-shadow:0 24px 80px rgba(0,0,0,.4)'
+  ].join(';');
+
+  var titulo = document.createElement('h2');
+  titulo.textContent = 'Denúncia registrada!';
+  titulo.style.cssText = 'margin:0 36px 10px 0;font-size:23px;';
+
+  var texto = document.createElement('p');
+  texto.textContent =
+    'Guarde estas informações para acompanhar sua denúncia e trocar mensagens com a equipe. A senha não poderá ser recuperada depois.';
+  texto.style.cssText =
+    'margin:0 0 22px;color:var(--ink-2,#b8bec8);line-height:1.6;font-size:14px;';
+
+  var fechar = document.createElement('button');
+  fechar.type = 'button';
+  fechar.textContent = '×';
+  fechar.setAttribute('aria-label', 'Fechar');
+  fechar.style.cssText =
+    'position:absolute;top:14px;right:16px;border:0;background:transparent;color:inherit;font-size:30px;cursor:pointer;';
+  fechar.addEventListener('click', function() {
+    overlay.remove();
+  });
+
+  function criarCampo(rotulo, valor, identificador) {
+    var grupo = document.createElement('div');
+    grupo.style.cssText = 'margin-bottom:16px;';
+
+    var label = document.createElement('label');
+    label.textContent = rotulo;
+    label.style.cssText =
+      'display:block;margin-bottom:7px;font-size:13px;font-weight:600;';
+
+    var linha = document.createElement('div');
+    linha.style.cssText = 'display:flex;gap:8px;align-items:stretch;';
+
+    var campo = document.createElement('input');
+    campo.type = 'text';
+    campo.readOnly = true;
+    campo.value = valor;
+    campo.id = identificador;
+    campo.style.cssText = [
+      'flex:1',
+      'min-width:0',
+      'padding:12px',
+      'border:1px solid var(--line,#30343b)',
+      'border-radius:9px',
+      'background:var(--bg,#090c10)',
+      'color:inherit',
+      'font-size:14px'
+    ].join(';');
+
+    var copiar = document.createElement('button');
+    copiar.type = 'button';
+    copiar.textContent = 'Copiar';
+    copiar.style.cssText =
+      'padding:0 13px;border:1px solid var(--line,#454b55);border-radius:9px;background:var(--surface-2,#242a33);color:inherit;cursor:pointer;';
+
+    copiar.addEventListener('click', async function() {
+      try {
+        if (navigator.clipboard && window.isSecureContext) {
+          await navigator.clipboard.writeText(valor);
+        } else {
+          campo.focus();
+          campo.select();
+          if (!document.execCommand('copy')) {
+            throw new Error('Cópia automática indisponível');
+          }
+        }
+        copiar.textContent = 'Copiado!';
+        setTimeout(function() {
+          if (copiar.isConnected) copiar.textContent = 'Copiar';
+        }, 1800);
+      } catch (erro) {
+        campo.focus();
+        campo.select();
+        toast('Selecione o texto e copie manualmente.');
+      }
+    });
+
+    linha.appendChild(campo);
+    linha.appendChild(copiar);
+    grupo.appendChild(label);
+    grupo.appendChild(linha);
+    return grupo;
+  }
+
+  var aviso = document.createElement('p');
+  aviso.textContent =
+    'Anote ou copie a senha antes de fechar esta janela.';
+  aviso.style.cssText =
+    'margin:4px 0 22px;color:var(--ink-2,#b8bec8);font-size:12px;line-height:1.5;';
+
+  var botaoFechar = document.createElement('button');
+  botaoFechar.type = 'button';
+  botaoFechar.textContent = 'Já guardei as informações';
+  botaoFechar.style.cssText =
+    'width:100%;padding:13px;border:0;border-radius:10px;background:var(--accent,#d8dfcc);color:#171a16;font-weight:700;cursor:pointer;';
+  botaoFechar.addEventListener('click', function() {
+    overlay.remove();
+  });
+
+  modal.appendChild(fechar);
+  modal.appendChild(titulo);
+  modal.appendChild(texto);
+  modal.appendChild(criarCampo('Protocolo', protocolo, 'ep-protocolo-copia'));
+  modal.appendChild(criarCampo('Senha de acesso', senha, 'ep-senha-copia'));
+  modal.appendChild(aviso);
+  modal.appendChild(botaoFechar);
+  overlay.appendChild(modal);
+
+  overlay.addEventListener('click', function(evento) {
+    if (evento.target === overlay) overlay.remove();
+  });
+
+  function teclaEscape(evento) {
+    if (evento.key === 'Escape' && document.getElementById('ep-popup-protocolo')) {
+      overlay.remove();
+      document.removeEventListener('keydown', teclaEscape);
+    }
+  }
+  document.addEventListener('keydown', teclaEscape);
+
+  document.body.appendChild(overlay);
+  document.getElementById('ep-protocolo-copia').focus();
+}
+
+
 /* ====================== routing ====================== */
 function route(){
   var h = (location.hash || '#home').replace(/^#/,'');
@@ -1167,36 +1325,8 @@ async function submitForm(){
     };
 
     console.log('Denúncia registrada:', protocolo);
-
-    /*
-     * Mostra a tela de sucesso existente.
-     *
-     * Primeiro tentamos as funções que já possam existir
-     * no seu HTML.
-     */
-
-    if (typeof showSuccess === 'function') {
-
-      showSuccess(protocolo, senha);
-
-    } else if (typeof mostrarSucesso === 'function') {
-
-      mostrarSucesso(protocolo, senha);
-
-    } else {
-
-      /*
-       * Fallback temporário.
-       * Depois vamos integrar isso à tela visual
-       * existente do seu site.
-       */
-
-      alert(
-        'Denúncia registrada com sucesso!\n\n' +
-        'Protocolo: ' + protocolo + '\n' +
-        'Senha: ' + senha
-      );
-    }
+    
+    mostrarPopupProtocolo(protocolo, senha);
 
   } catch (error) {
 
