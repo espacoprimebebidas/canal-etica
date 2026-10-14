@@ -1003,7 +1003,7 @@ function viewNovo(){
       '<div class="card">' +
         '<div class="section-title">Quando e onde</div>' +
         '<div class="grid-2">' +
-          '<div class="field"><label>Data ou período aproximado</label><input type="text" name="dataFato" placeholder="ex.: em julho/2026, ou 14/08/2026" value="'+esc(formDraft.dataFato)+'"></div>' +
+          '<div class="field"><label>Data da ocorrência</label><input type="text" name="dataFato" placeholder="DD/MM/AAAA" maxlength="10" inputmode="numeric" pattern="(0[1-9]|[12][0-9]|3[01])/(0[1-9]|1[0-2])/[0-9]{4}" title="Informe a data no formato DD/MM/AAAA, por exemplo 14/08/2026." value="'+esc(formDraft.dataFato)+'"></div>' +
           '<div class="field"><label>Local ou área relacionada</label><input type="text" name="local" placeholder="ex.: CD São José, equipe Comercial" value="'+esc(formDraft.local)+'"></div>' +
         '</div>' +
       '</div>' +
@@ -1052,7 +1052,6 @@ async function submitForm(){
 
     const anonima = formData.get('anon') === '1';
 
-    
     const dataInformada = (formData.get('dataFato') || '').trim();
     let dataOcorrencia = null;
 
