@@ -3229,63 +3229,75 @@ function saveConflito(form, id){
     c.conflitoInteresse = {verificado: !!fd.get('verificado'), detalhe: fd.get('detalhe')||''};
   }, { stash:{hash:'#admin/caso/'+id} });
 }
-async function saveRisco(form, id){
 
-  if(!isAdminAuthed()){
+async function saveRisco(form, id) {
+  if (!isAdminAuthed()) {
     toast('Sessão administrativa inválida.');
     return;
   }
 
   var fd = new FormData(form);
-  var risco = fd.get('risco');
+  var riscoSelecionado = fd.get('risco');
 
-  if(!risco){
+  if (!riscoSelecionado) {
     toast('Selecione um nível de risco.');
+    return;
+  }
+
+  var mapaParaBanco = {
+    baixo: 'baixa',
+    medio: 'media',
+    alto: 'alta',
+    critico: 'critica'
+  };
+
+  var mapaParaInterface = {
+    baixa: 'baixo',
+    media: 'medio',
+    alta: 'alto',
+    critica: 'critico'
+  };
+
+  var prioridadeBanco = mapaParaBanco[riscoSelecionado];
+
+  if (!prioridadeBanco) {
+    toast('Nível de risco inválido.');
     return;
   }
 
   showOverlay(true);
 
-  try{
-
+  try {
     var resultado = await supabaseClient
       .from('denuncias')
       .update({
-        prioridade: risco
+        prioridade: prioridadeBanco
       })
-      .eq('id', id);
+      .eq('id', id)
+      .select('id,prioridade')
+      .single();
 
-    if(resultado.error){
+    if (resultado.error) {
       throw resultado.error;
     }
 
-    var c = caseById(id);
+    var caso = caseById(id);
 
-    if(c){
-      c.risco = risco;
+    if (caso) {
+      caso.risco =
+        mapaParaInterface[resultado.data.prioridade] || riscoSelecionado;
     }
-
-    toast('Classificação de risco salva no Supabase.');
 
     await carregarCasosAdmin();
 
     render();
 
-  } catch(error){
-
-    console.error(
-      'Erro ao salvar risco:',
-      error
-    );
-
-    toast(
-      'Não foi possível salvar a classificação de risco.'
-    );
-
+    toast('Classificação de risco salva com sucesso.');
+  } catch (error) {
+    console.error('Erro ao salvar risco:', error);
+    toast('Não foi possível salvar a classificação de risco.');
   } finally {
-
     showOverlay(false);
-
   }
 }
 
