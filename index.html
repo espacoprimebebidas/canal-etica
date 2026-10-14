@@ -1052,32 +1052,59 @@ async function submitForm(){
 
     const anonima = formData.get('anon') === '1';
 
-    const dados = {
-      anonima: anonima,
+    
+    const dataInformada = (formData.get('dataFato') || '').trim();
+    let dataOcorrencia = null;
 
-      nome: anonima ? null : (formData.get('nome') || '').trim(),
-      email: anonima ? null : (formData.get('email') || '').trim(),
-      telefone: anonima ? null : (formData.get('telefone') || '').trim(),
+    if (dataInformada) {
+      const formatoISO = /^(\d{4})-(\d{2})-(\d{2})$/.exec(dataInformada);
+      const formatoBR = /^(\d{2})\/(\d{2})\/(\d{4})$/.exec(dataInformada);
 
-      relacao_empresa: formData.get('relacao_empresa') || null,
+      if (formatoISO) {
+        dataOcorrencia = dataInformada;
+      } else if (formatoBR) {
+        dataOcorrencia =
+          formatoBR[3] + '-' + formatoBR[2] + '-' + formatoBR[1];
+      } else {
+        throw new Error(
+          'Informe a data da ocorrência no formato DD/MM/AAAA, por exemplo 14/08/2026.'
+        );
+      }
 
-      categoria: formData.get('categoria') || null,
-
-      data_ocorrencia:
-        formData.get('data_ocorrencia') || null,
-
-      local_ocorrencia:
-        (formData.get('local_ocorrencia') || '').trim(),
-
-      envolvidos:
-        (formData.get('envolvidos') || '').trim(),
-
-      testemunhas:
-        (formData.get('testemunhas') || '').trim(),
-
-      descricao:
-        (formData.get('descricao') || '').trim()
-    };
+      const dataValidacao = new Date(dataOcorrencia + 'T00:00:00Z');
+      if (
+        Number.isNaN(dataValidacao.getTime()) ||
+        dataValidacao.toISOString().slice(0, 10) !== dataOcorrencia
+      ) {
+        throw new Error('Informe uma data de ocorrência válida.');
+      }
+    }
+    
+      const dados = {
+        anonima: anonima,
+  
+        nome: anonima ? null : (formData.get('nome') || '').trim(),
+        email: anonima ? null : (formData.get('email') || '').trim(),
+        telefone: anonima ? null : (formData.get('telefone') || '').trim(),
+  
+        relacao_empresa: formData.get('area') || null,
+  
+        categoria: formData.get('categoria') || null,
+  
+        data_ocorrencia: dataOcorrencia,
+  
+        local_ocorrencia:
+          (formData.get('local') || '').trim() || null,
+  
+        envolvidos:
+          (formData.get('pessoas') || '').trim() || null,
+  
+        testemunhas:
+          (formData.get('testemunhas') || '').trim() || null,
+  
+        descricao:
+          (formData.get('descricao') || '').trim()
+      };
 
     // Validações básicas
     if (!dados.categoria) {
