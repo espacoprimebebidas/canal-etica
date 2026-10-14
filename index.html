@@ -1053,12 +1053,6 @@ function topbarHTML(active){
   '</div></div>';
 }
 
-function protoBanner(){
-  return '<div class="container" style="padding-top:16px;">' +
-    '<div class="banner banner-warn">'+iconWarn()+'<div><strong>Protótipo de demonstração — uso interno (colaboradores).</strong> Este canal não deve ser usado para denúncias reais. É uma simulação para validar o fluxo descrito no Manual do Canal de Ética antes de contratar uma plataforma real — e, como toda página deste tipo, os dados ficam legíveis a quem tiver o link, então não há garantia real de sigilo, nem verificação real de que quem acessa é colaborador. Uma Ouvidoria separada, para clientes, fornecedores e demais pessoas de fora da empresa, está prevista como próximo passo.</div></div>' +
-  '</div>';
-}
-
 function renderChrome(){
   /* re-render only when the local/readonly banners state changes without touching route content unnecessarily */
   render();
@@ -1066,7 +1060,7 @@ function renderChrome(){
 
 /* ====================== VIEW: home ====================== */
 function viewHome(){
-  return topbarHTML('home') + protoBanner() +
+  return topbarHTML('home') +
   '<header class="container" style="padding:56px 24px 40px;">' +
     '<div style="max-width:700px;">' +
       '<div class="kicker">Canal de Ética e Denúncias · uso interno</div>' +
@@ -1125,7 +1119,7 @@ function viewNovo(){
     }).join('') + '</optgroup>';
   }).join('');
 
-  return topbarHTML('novo') + protoBanner() +
+  return topbarHTML('novo') +
   '<div class="container-narrow" style="padding:36px 24px 60px;">' +
     '<div class="kicker">Nova manifestação</div>' +
     '<h1 style="font-size:28px;">Registrar uma denúncia</h1>' +
@@ -1361,7 +1355,7 @@ var replyDraft = '';
 
 function viewProtocolo(){
   var result = lookupResultId ? caseById(lookupResultId) : null;
-  return topbarHTML('protocolo') + protoBanner() +
+  return topbarHTML('protocolo') +
   '<div class="container-narrow" style="padding:36px 24px 60px;">' +
     '<div class="kicker">Acompanhamento</div>' +
     '<h1 style="font-size:28px;">Consultar protocolo</h1>' +
