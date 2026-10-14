@@ -1774,10 +1774,46 @@ function mapearDenunciaParaCaso(d){
       'outro'
 
   };
+  
+  var categoria = null;
 
-  var categoria =
-    categorias[d.categoria] ||
-    'outro';
+  // Aceita tanto os IDs atuais quanto os rótulos do formulário.
+  CATEGORY_GROUPS.forEach(function(grupo) {
+    grupo.items.forEach(function(item) {
+      if (
+        d.categoria === item.id ||
+        d.categoria === item.label
+      ) {
+        categoria = item.id;
+      }
+    });
+  });
+
+  // Compatibilidade com categorias usadas pela versão anterior.
+  var categoriasAntigas = {
+    'Assédio': 'assedio_moral',
+    'Discriminação': 'discriminacao',
+    'Fraude': 'fraude',
+    'Corrupção': 'corrupcao',
+    'Conflito de interesses': 'conflito_interesse',
+    'Desvio ou apropriação de recursos': 'furto',
+    'Descumprimento de normas internas': 'descumprimento_politica',
+    'Conduta inadequada': 'outro',
+    'Segurança': 'risco_empresa',
+    'Meio ambiente': 'risco_empresa',
+    'Outro': 'outro'
+  };
+
+  if (!categoria && categoriasAntigas[d.categoria]) {
+    categoria = categoriasAntigas[d.categoria];
+  }
+
+  // Evita classificar silenciosamente categorias desconhecidas como "outro".
+  if (!categoria) {
+    console.warn('Categoria não mapeada:', d.categoria);
+    categoria = d.categoria || 'outro';
+  }
+
 
   return {
 
