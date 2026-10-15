@@ -1206,7 +1206,12 @@ function viewNovo(){
         '<div class="field"><label>Descrição dos fatos <span class="req">*</span></label><textarea name="descricao" required placeholder="O que aconteceu, quando, onde e quem estava envolvido, sempre que você souber." style="min-height:130px;">'+esc(formDraft.descricao)+'</textarea></div>' +
         '<div class="field"><label>Testemunhas</label><textarea name="testemunhas" placeholder="Há testemunhas? Quem, se souber.">'+esc(formDraft.testemunhas)+'</textarea></div>' +
         '<div class="field"><label>Documentos ou evidências</label><textarea name="evidencias" placeholder="Existem documentos, mensagens, imagens ou outros elementos que ajudem na apuração?">'+esc(formDraft.evidencias)+'</textarea></div>' +
-        '<div class="field" style="margin-bottom:0;"><label>Anexos (opcional)</label><textarea name="anexos" placeholder="Descreva os arquivos que você anexaria.">'+esc(formDraft.anexos)+'</textarea><div class="field-hint">Neste protótipo não é possível enviar arquivos reais — descreva o que você anexaria.</div></div>' +
+        
+      '<div class="field" style="margin-bottom:0;">' +
+        '<label for="anexos">Anexos (opcional)</label>' +
+        '<input type="file" id="anexos" name="anexos" multiple accept=".pdf,.jpg,.jpeg,.png,.doc,.docx,.xls,.xlsx,application/pdf,image/jpeg,image/png,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">' +
+        '<div class="field-hint">Selecione até 3 arquivos. Formatos: PDF, JPG, PNG, Word e Excel. Limite de 10 MB por arquivo.</div>' +
+        '<div id="anexos-selecionados" class="readonly-note"></div>' +
       '</div>' +
 
       '<div class="banner banner-info">'+iconInfo()+'<div>Você não precisa ter certeza sobre a conclusão jurídica ou disciplinar do caso. Relate, de boa-fé, os fatos conhecidos e indique elementos que possam ajudar na apuração.</div></div>' +
@@ -1241,6 +1246,64 @@ async function submitForm(){
 
   try {
     const formData = new FormData(form);
+
+    const campoAnexos = form.querySelector('input[name="anexos"]');
+    const arquivos = campoAnexos
+      ? Array.from(campoAnexos.files || [])
+      : [];
+    
+    const tiposPermitidos = [
+      'application/pdf',
+      'image/jpeg',
+      'image/png',
+      'application/msword',
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+      'application/vnd.ms-excel',
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    ];
+    
+    const extensoesPermitidas = [
+      'pdf', 'jpg', 'jpeg', 'png',
+      'doc', 'docx', 'xls', 'xlsx'
+    ];
+    
+    if (arquivos.length > 3) {
+      throw new Error('Selecione no máximo 3 arquivos.');
+    }
+    
+    for (const arquivo of arquivos) {
+      const extensao = arquivo.name.split('.').pop().toLowerCase();
+    
+      if (
+        arquivo.size === 0 ||
+        arquivo.size > 10 * 1024 * 1024
+      ) {
+        throw new Error(
+          'Cada arquivo deve ter conteúdo e no máximo 10 MB: ' +
+          arquivo.name
+        );
+      }
+    
+      if (
+        !extensoesPermitidas.includes(extensao) ||
+        !tiposPermitidos.includes(arquivo.type)
+      ) {
+        throw new Error(
+          'Formato não permitido: ' + arquivo.name
+        );
+      }
+    }
+    
+    const listaAnexos = document.getElementById('anexos-selecionados');
+    
+    if (listaAnexos) {
+      listaAnexos.textContent = arquivos.length
+        ? arquivos.map(function(arquivo) {
+            return arquivo.name + ' (' +
+              (arquivo.size / 1024 / 1024).toFixed(2) + ' MB)';
+          }).join(' · ')
+        : 'Nenhum arquivo selecionado.';
+    }
 
     const anonima = formData.get('anon') === '1';
 
