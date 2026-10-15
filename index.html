@@ -2641,6 +2641,14 @@ function viewAdminCaso(id){
 
       stepperHTML(c.status) +
 
+      '<div class="hr"></div>' +
+
+      '<form data-action="delete-case" data-id="' + c.id + '" style="display:flex;justify-content:flex-end;">' +
+        '<button class="btn btn-danger btn-sm" type="submit">' +
+          'Excluir denúncia permanentemente' +
+        '</button>' +
+      '</form>' +
+
     '</div>' +
 
 
