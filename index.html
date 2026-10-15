@@ -1421,6 +1421,57 @@ async function submitForm(){
     const protocolo = resultado.protocolo;
     const senha = resultado.senha;
 
+    // Enviar os anexos após registrar a denúncia
+    const falhasAnexos = [];
+
+    const endpointAnexos =
+      'https://zttqgkxnczzvfuxzratf.supabase.co/functions/v1/enviar-anexos';
+
+    for (const arquivo of arquivos) {
+      try {
+        const dadosAnexo = new FormData();
+
+        dadosAnexo.append('protocolo', protocolo);
+        dadosAnexo.append('senha', senha);
+        dadosAnexo.append('arquivo', arquivo, arquivo.name);
+
+        const respostaAnexo = await fetch(endpointAnexos, {
+          method: 'POST',
+          body: dadosAnexo
+        });
+
+        let resultadoAnexo = {};
+
+        try {
+          resultadoAnexo = await respostaAnexo.json();
+        } catch (_) {
+          resultadoAnexo = {};
+        }
+
+        if (!respostaAnexo.ok || !resultadoAnexo.sucesso) {
+          falhasAnexos.push(
+            arquivo.name + ': ' +
+            (resultadoAnexo.erro || 'não foi possível enviar.')
+          );
+        }
+      } catch (erroAnexo) {
+        console.error('Erro ao enviar anexo:', erroAnexo);
+
+        falhasAnexos.push(
+          arquivo.name + ': falha de comunicação com o servidor.'
+        );
+      }
+    }
+
+    if (falhasAnexos.length > 0) {
+      alert(
+        'Sua denúncia foi registrada com sucesso, mas alguns anexos ' +
+        'não foram enviados. Guarde seu protocolo e sua senha.\n\n' +
+        'Arquivos pendentes:\n' +
+        falhasAnexos.join('\n')
+      );
+    }
+
     // Guarda temporariamente os dados da denúncia
     window.ULTIMA_DENUNCIA = {
       protocolo: protocolo,
