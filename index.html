@@ -359,10 +359,30 @@ var RISK_INFO = {
 var RISK_ORDER = ['baixo','medio','alto','critico'];
 
 var CONCLUSAO_INFO = {
-  procedente:{label:'Procedente', cls:'serious', desc:'Evidências suficientes sustentam a ocorrência reportada.'},
-  parcial:{label:'Parcialmente procedente', cls:'warning', desc:'Parte relevante dos fatos foi confirmada.'},
-  nao_procedente:{label:'Não procedente', cls:'good', desc:'As evidências não sustentam a ocorrência reportada.'},
-  inconclusiva:{label:'Inconclusiva', cls:'neutral', desc:'Não foi possível obter elementos suficientes para uma conclusão.'}
+  procedente: {
+    label: 'Procedente',
+    cls: 'serious',
+    desc: 'Evidências suficientes sustentam a ocorrência reportada.',
+    cor: '#E8895F'
+  },
+  parcial: {
+    label: 'Parcialmente procedente',
+    cls: 'warning',
+    desc: 'Parte relevante dos fatos foi confirmada.',
+    cor: '#E0AA3A'
+  },
+  nao_procedente: {
+    label: 'Não procedente',
+    cls: 'good',
+    desc: 'As evidências não sustentam a ocorrência reportada.',
+    cor: '#3FCF5F'
+  },
+  inconclusiva: {
+    label: 'Inconclusiva',
+    cls: 'neutral',
+    desc: 'Não foi possível obter elementos suficientes para uma conclusão.',
+    cor: '#829CA8'
+  }
 };
 
 var STATUS_ORDER = ['recebido','triagem','investigacao','concluido'];
@@ -2513,7 +2533,8 @@ function viewAdminDashboard(){
           Object.keys(ind.byConclusao).map(function(k){
             var n = ind.byConclusao[k];
             var pct = Math.round(n/Math.max(1,ind.concluded)*100);
-            return '<div class="bar-row"><div class="bar-name">'+conclusaoBadge(k)+'</div><div class="bar-track"><div class="bar-fill" style="width:'+pct+'%;background:var(--'+CONCLUSAO_INFO[k].cls+');"></div></div><div class="bar-count tabular">'+n+'</div></div>';
+            
+            return '<div class="bar-row"><div class="bar-name">'+conclusaoBadge(k)+'</div><div class="bar-track"><div class="bar-fill" style="width:'+pct+'%;background:'+CONCLUSAO_INFO[k].cor+';"></div></div><div class="bar-count tabular">'+n+'</div></div>';
           }).join('')) +
       '</div>' +
       '<div class="card">' +
