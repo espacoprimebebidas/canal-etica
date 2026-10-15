@@ -1089,6 +1089,9 @@ function topbarHTML(active){
       navItem('novo','Registrar denúncia') +
       navItem('protocolo','Acompanhar protocolo') +
       navItem('admin','Área interna','subtle') +
+      (isAdminAuthed()
+        ? '<button type="button" class="btn btn-ghost btn-sm" data-action="refresh-all" style="white-space:nowrap;">↻ Atualizar</button>'
+        : '') +
     '</nav>' +
   '</div></div>';
 }
@@ -2230,6 +2233,61 @@ async function carregarCasosAdmin() {
     console.error('Erro ao carregar denúncias:', error);
 
     toast('Não foi possível carregar as denúncias.');
+  }
+}
+
+async function atualizarInformacoes() {
+  if (!isAdminAuthed()) {
+    toast('Entre no ambiente interno para atualizar as informações.');
+    return;
+  }
+
+  var botao = document.querySelector('[data-action="refresh-all"]');
+
+  if (botao && botao.disabled) return;
+
+  var textoOriginal = botao ? botao.textContent : '↻ Atualizar';
+
+  try {
+    if (botao) {
+      botao.disabled = true;
+      botao.textContent = 'Atualizando...';
+    }
+
+    showOverlay(true);
+
+    // Atualiza a lista de administradores ativos.
+    var perfis = await supabaseClient
+      .from('perfis_admin')
+      .select('id,nome,cargo,ativo')
+      .eq('ativo', true)
+      .order('nome', { ascending: true });
+
+    if (perfis.error) throw perfis.error;
+
+    adminProfiles = perfis.data || [];
+
+    // Recarrega denúncias, histórico e mensagens do Supabase.
+    await carregarCasosAdmin();
+
+    // Reconstrói a tela que estiver aberta.
+    render();
+
+    toast('Atualização concluída.');
+  } catch (error) {
+    console.error('Erro ao atualizar informações:', error);
+    toast('Não foi possível atualizar tudo. Consulte o Console.');
+  } finally {
+    showOverlay(false);
+
+    var botaoAtual = document.querySelector(
+      '[data-action="refresh-all"]'
+    );
+
+    if (botaoAtual) {
+      botaoAtual.disabled = false;
+      botaoAtual.textContent = textoOriginal;
+    }
   }
 }
   
@@ -4025,6 +4083,9 @@ document.addEventListener('click', function(e){
   var t = e.target.closest('[data-action]');
   if(!t) return;
   var action = t.dataset.action;
+  if (action === 'refresh-all') {
+    atualizarInformacoes();
+  }
   if(action==='open-case'){ location.hash = '#admin/caso/'+t.dataset.id; }
   else if(action === 'delete-case') {excluirCaso(t.dataset.id);}
   else if(action==='admin-logout'){
