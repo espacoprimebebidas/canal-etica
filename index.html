@@ -3506,7 +3506,6 @@ async function addNote(form, id){
   }
 }
 
-
 async function saveConclusao(form, id){
 
   if(!isAdminAuthed()){
@@ -3607,7 +3606,6 @@ async function saveConclusao(form, id){
   }
 }
 
-
 async function encerrarCaso(id){
 
   if(!isAdminAuthed()){
@@ -3678,6 +3676,71 @@ async function encerrarCaso(id){
 
     showOverlay(false);
 
+  }
+}
+
+async function excluirCaso(id) {
+  if (!isAdminAuthed() || !adminSession?.access_token) {
+    toast('Sessão administrativa inválida. Entre novamente.');
+    return;
+  }
+
+  var caso = caseById(id);
+
+  if (!caso) {
+    toast('Denúncia não encontrada.');
+    return;
+  }
+
+  var confirmacao = window.confirm(
+    'ATENÇÃO: exclusão permanente\n\n' +
+    'Protocolo: ' + caso.protocolo + '\n\n' +
+    'Esta ação apagará a denúncia, as mensagens, o histórico e os registros de anexos. ' +
+    'Não será possível desfazer.\n\n' +
+    'Deseja realmente excluir este caso?'
+  );
+
+  if (!confirmacao) return;
+
+  showOverlay(true);
+
+  try {
+    var resultado = await supabaseClient.functions.invoke(
+      'excluir-denuncia',
+      {
+        body: { id: id },
+        headers: {
+          Authorization: 'Bearer ' + adminSession.access_token
+        }
+      }
+    );
+
+    if (resultado.error) {
+      var detalhe = resultado.data?.erro || resultado.error.message;
+      throw new Error(detalhe || 'Não foi possível excluir a denúncia.');
+    }
+
+    if (!resultado.data || resultado.data.sucesso !== true) {
+      throw new Error(
+        resultado.data?.erro || 'O servidor não confirmou a exclusão.'
+      );
+    }
+
+    await carregarCasosAdmin();
+
+    toast('Denúncia ' + caso.protocolo + ' excluída permanentemente.');
+
+    location.hash = '#admin/casos';
+    render();
+
+  } catch (error) {
+    console.error('Erro ao excluir denúncia:', error);
+    toast(
+      error?.message ||
+      'Não foi possível excluir a denúncia. Verifique o resultado antes de tentar novamente.'
+    );
+  } finally {
+    showOverlay(false);
   }
 }
 
@@ -3772,6 +3835,7 @@ document.addEventListener('click', function(e){
   if(!t) return;
   var action = t.dataset.action;
   if(action==='open-case'){ location.hash = '#admin/caso/'+t.dataset.id; }
+  else if(action === 'delete-case') {excluirCaso(t.dataset.id);}
   else if(action==='admin-logout'){
   (async function(){
 
