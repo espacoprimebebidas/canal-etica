@@ -2866,6 +2866,12 @@ function viewAdminCaso(id){
             ''
       ) +
 
+      '<div class="hr"></div>' +
+      '<div class="section-title" style="font-size:16px;">Arquivos anexados</div>' +
+      '<div id="anexos-admin" data-denuncia-id="' + esc(c.id) + '">' +
+        '<div class="field-hint">Carregando arquivos...</div>' +
+      '</div>' +
+
     '</div>' +
 
 
@@ -3248,6 +3254,70 @@ function viewAdminCaso(id){
   '</div>' +
 
   footerHTML();
+}
+async function carregarAnexosAdmin(denunciaId) {
+  var container = document.getElementById('anexos-admin');
+
+  if (!container || !isAdminAuthed()) return;
+  if (container.dataset.denunciaId !== denunciaId) return;
+
+  container.innerHTML =
+    '<div class="field-hint">Carregando arquivos...</div>';
+
+  try {
+    var resultado = await supabaseClient.functions.invoke(
+      'listar-anexos-admin',
+      { body: { denuncia_id: denunciaId } }
+    );
+
+    if (resultado.error) throw resultado.error;
+
+    var dados = resultado.data || {};
+    if (!dados.sucesso) {
+      throw new Error(dados.erro || 'Não foi possível carregar os anexos.');
+    }
+
+    var anexos = dados.anexos || [];
+    if (!anexos.length) {
+      container.innerHTML =
+        '<div class="empty" style="padding:12px 0;">' +
+          'Nenhum arquivo anexado a esta denúncia.' +
+        '</div>';
+      return;
+    }
+
+    container.innerHTML = anexos.map(function(anexo) {
+      var tamanho = Number(anexo.tamanho_bytes || 0);
+      var tamanhoTexto = tamanho >= 1024 * 1024
+        ? (tamanho / (1024 * 1024)).toFixed(2) + ' MB'
+        : (tamanho / 1024).toFixed(1) + ' KB';
+
+      return (
+        '<div style="display:flex;justify-content:space-between;' +
+          'align-items:center;gap:12px;flex-wrap:wrap;' +
+          'padding:12px 0;border-bottom:1px solid var(--border);">' +
+          '<div style="display:flex;align-items:center;gap:10px;min-width:0;">' +
+            '<div style="color:var(--accent);">📎</div>' +
+            '<div style="min-width:0;">' +
+              '<div style="font-size:14px;font-weight:600;overflow-wrap:anywhere;">' +
+                esc(anexo.nome_arquivo) +
+              '</div>' +
+              '<div class="field-hint">' +
+                esc(tamanhoTexto) + ' · ' + esc(anexo.tipo_arquivo || 'Arquivo') +
+              '</div>' +
+            '</div>' +
+          '</div>' +
+          '<a class="btn btn-primary btn-sm" href="' + esc(anexo.url) + '" ' +
+            'target="_blank" rel="noopener noreferrer">Abrir arquivo</a>' +
+        '</div>'
+      );
+    }).join('');
+  } catch (erro) {
+    console.error('Erro ao carregar anexos:', erro);
+    container.innerHTML =
+      '<div class="banner banner-warn"><div>Não foi possível carregar os arquivos. ' +
+      'Atualize a página ou entre novamente no ambiente interno.</div></div>';
+  }
 }
 
 /* ====================== admin actions ====================== */
@@ -3921,8 +3991,12 @@ function render(){
   else if(parts[0]==='admin') html = viewAdmin(parts);
   else html = viewHome();
   document.getElementById('app').innerHTML = html;
+  if (parts[0] === 'admin' && parts[1] === 'caso' && parts[2]) {
+    carregarAnexosAdmin(parts[2]);
+  }
   window.scrollTo({top:0});
   justSubmitted = false;
+  
 }
 
 /* ====================== event delegation ====================== */
