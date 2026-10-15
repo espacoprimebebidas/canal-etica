@@ -1292,7 +1292,13 @@ async function submitForm(){
   
         testemunhas:
           (formData.get('testemunhas') || '').trim() || null,
-  
+        
+        evidencias:
+          (formData.get('evidencias') || '').trim() || null,
+        
+        anexos:
+          (formData.get('anexos') || '').trim() || null,
+
         descricao:
           (formData.get('descricao') || '').trim()
       };
@@ -1910,11 +1916,11 @@ function mapearDenunciaParaCaso(d){
     testemunhas:
       d.testemunhas || '',
 
-    evidenciasDisponiveis:
-      '',
-
-    anexosDescricao:
-      '',
+    evidenciasDisponiveis: 
+      d.evidencias_disponiveis || '',
+    
+    anexosDescricao: 
+      d.anexos_descricao || '',
 
     status:
       status || 'recebido',
