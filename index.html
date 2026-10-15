@@ -2031,7 +2031,7 @@ async function carregarCasosAdmin() {
     var resultado = await supabaseClient
       .from('denuncias')
       .select(
-        'id,protocolo,anonima,nome,email,telefone,relacao_empresa,categoria,data_ocorrencia,local_ocorrencia,envolvidos,testemunhas,descricao,status,prioridade,criado_em,atualizado_em,responsavel_id,evidencias_analisadas,diligencias,conclusao,fundamentacao,medidas_adotadas,concluido_em'
+        'id,protocolo,anonima,nome,email,telefone,relacao_empresa,categoria,data_ocorrencia,local_ocorrencia,envolvidos,testemunhas,descricao,status,prioridade,criado_em,atualizado_em,responsavel_id,evidencias_analisadas,evidencias_disponiveis,anexos_descricao,diligencias,conclusao,fundamentacao,medidas_adotadas,concluido_em'
       )
       .order('criado_em', { ascending: false });
 
