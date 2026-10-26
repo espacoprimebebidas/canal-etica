@@ -302,6 +302,40 @@ tbody tr.row-link:hover{background:var(--surface-2);}
 .legend-item{display:flex;align-items:center;gap:7px;font-size:12.5px;color:var(--ink-2);}
 .legend-item .sw{width:10px;height:10px;border-radius:3px;}
 @media (prefers-reduced-motion:reduce){.spinner{animation:none;}.toast{transition:none;}}
+  
+/* Campo de data — padrão visual do Canal de Ética */
+#ep-form input[type="date"] {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  min-height: 46px;
+  padding: 12px 14px;
+  border: 1px solid var(--border, #3b4657);
+  border-radius: 10px;
+  background-color: var(--surface, #151f2e);
+  color: var(--ink, #f3f4f6);
+  font: inherit;
+  font-size: 14px;
+  line-height: 1.4;
+  color-scheme: dark;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+#ep-form input[type="date"]:focus {
+  outline: none;
+  border-color: var(--accent, #49c5ad);
+  box-shadow: 0 0 0 3px rgba(73, 197, 173, 0.15);
+}
+
+#ep-form input[type="date"]::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  opacity: 0.85;
+}
+
+#ep-form input[type="date"]:hover {
+  border-color: var(--accent, #49c5ad);
+}
 </style>
 </head>
 <body>
@@ -778,6 +812,40 @@ tbody tr.row-link:hover{background:var(--surface-2);}
 .legend-item{display:flex;align-items:center;gap:7px;font-size:12.5px;color:var(--ink-2);}
 .legend-item .sw{width:10px;height:10px;border-radius:3px;}
 @media (prefers-reduced-motion:reduce){.spinner{animation:none;}.toast{transition:none;}}
+
+/* Campo de data — padrão visual do Canal de Ética */
+#ep-form input[type="date"] {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  min-height: 46px;
+  padding: 12px 14px;
+  border: 1px solid var(--border, #3b4657);
+  border-radius: 10px;
+  background-color: var(--surface, #151f2e);
+  color: var(--ink, #f3f4f6);
+  font: inherit;
+  font-size: 14px;
+  line-height: 1.4;
+  color-scheme: dark;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+#ep-form input[type="date"]:focus {
+  outline: none;
+  border-color: var(--accent, #49c5ad);
+  box-shadow: 0 0 0 3px rgba(73, 197, 173, 0.15);
+}
+
+#ep-form input[type="date"]::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  opacity: 0.85;
+}
+
+#ep-form input[type="date"]:hover {
+  border-color: var(--accent, #49c5ad);
+}
 </style>
 </head>`;
 
